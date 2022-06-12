@@ -1,5 +1,13 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:schedulex_flutter/app_base/value.dart';
+import 'package:schedulex_flutter/base/get_anything.dart';
+import 'package:schedulex_flutter/pages/page_import.dart';
+import 'package:schedulex_flutter/pages/page_main.dart';
+
+final fluro = FluroRouter();
 
 void main() {
   runApp(const MyApp());
@@ -12,11 +20,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(builder: (light, dark) {
-      return MaterialApp(
+      return GetMaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'ScheduleX',
         theme: ThemeData(
             brightness: Brightness.light,
-            colorScheme: light,
+            colorScheme: light ?? defaultColorSchema,
             useMaterial3: true),
         home: const ScheduleXApp(),
       );
@@ -32,39 +41,20 @@ class ScheduleXApp extends StatefulWidget {
 }
 
 class _ScheduleXAppState extends State<ScheduleXApp> {
+  bool? isFirstUse;
+
+  @override
+  void initState() {
+    super.initState();
+    sp.then((value) => isFirstUse = value.getBool(keyIsFirstUse));
+  }
+
   @override
   Widget build(BuildContext context) {
+    var body = (isFirstUse ?? false) ? const PageImport() : const PageMain();
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            leading: Icon(Icons.close),
-            pinned: true,
-            floating: true,
-            snap: true,
-            centerTitle: false,
-            flexibleSpace: FlexibleSpaceBar(
-              collapseMode: CollapseMode.none,
-              titlePadding: EdgeInsetsDirectional.only(start: 42, bottom: 16),
-              title: Text(
-                "设置",
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            expandedHeight: 200,
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                Container(
-                  height: 8700,
-                )
-              ],
-            ),
-          )
-        ],
-      ),
+      backgroundColor: colorScheme.background,
+      body: body,
     );
   }
 }

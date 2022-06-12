@@ -30,6 +30,12 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # 缓存
+  shared_preferences: ^2.0.15
+  # get x
+  get: 4.6.5
+  # 路由
+  fluro: ^2.0.3
   # 动态取色
   dynamic_color: ^1.2.2
   cupertino_icons: ^1.0.2
