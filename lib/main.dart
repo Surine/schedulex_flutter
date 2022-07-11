@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/value.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/pages/page_import.dart';
-import 'package:schedulex_flutter/pages/page_main.dart';
+import 'package:schedulex_flutter/pages/schedule/page_main.dart';
+
+import 'pages/schedule/schedule_controller.dart';
 
 final fluro = FluroRouter();
 
@@ -41,17 +43,16 @@ class ScheduleXApp extends StatefulWidget {
 }
 
 class _ScheduleXAppState extends State<ScheduleXApp> {
-  bool? isFirstUse;
+  final logic = Get.put(ScheduleController());
 
   @override
   void initState() {
     super.initState();
-    sp.then((value) => isFirstUse = value.getBool(keyIsFirstUse));
   }
 
   @override
   Widget build(BuildContext context) {
-    var body = (isFirstUse ?? false) ? const PageImport() : const PageMain();
+    var body = !logic.hasSchedule() ? const PageImport() : const PageMain();
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: body,

@@ -6,6 +6,8 @@ import 'package:schedulex_flutter/entity/schedule.dart';
 import 'package:schedulex_flutter/pages/console/page_console.dart';
 import 'package:schedulex_flutter/widget/course_widget.dart';
 
+import 'schedule_controller.dart';
+
 class PageMain extends StatefulWidget {
   const PageMain({Key? key}) : super(key: key);
 
@@ -14,6 +16,8 @@ class PageMain extends StatefulWidget {
 }
 
 class _PageMainState extends State<PageMain> {
+  ScheduleController scheduleController = Get.find<ScheduleController>();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -73,9 +77,11 @@ class _PageMainState extends State<PageMain> {
           Spacer(),
           IconButton(
             onPressed: () {
-              Get.bottomSheet(PageConsole());
+              Get.bottomSheet(PageConsole(
+                scheduleController: scheduleController,
+              ));
             },
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
           ),
         ],
       ),

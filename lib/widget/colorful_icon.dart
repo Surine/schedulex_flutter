@@ -24,7 +24,7 @@ class ColorfulIcon extends StatelessWidget {
       height: size ?? 45,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          color: color.withOpacity(0.66),
+          color: color.withOpacity(0.16),
           borderRadius: BorderRadius.circular(18)),
       child: Icon(
         iconData,

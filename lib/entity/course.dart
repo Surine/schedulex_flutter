@@ -1,6 +1,14 @@
+import 'dart:core';
+
+import 'package:floor/floor.dart';
+
 /// 课程
 
+@entity
 class CourseWrapper {
+  @PrimaryKey(autoGenerate: true)
+  int? dbId;
+
   // 课程名
   String? name;
 
@@ -20,5 +28,12 @@ class CourseWrapper {
   int sectionContinue = 1;
 
   // 哪几周上课，如[1,3,4,6,7,8]表示1，3，4，6，7，8周上课
-  List<int> week = [];
+  String raWeek = "";
+
+  // 所属课表的id
+  int? scheduleId;
+}
+
+extension on CourseWrapper {
+  List<int> get week => raWeek.split(",").map((e) => int.parse(e)).toList();
 }

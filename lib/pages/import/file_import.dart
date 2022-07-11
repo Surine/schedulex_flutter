@@ -58,8 +58,7 @@ class FileImport extends StatelessWidget {
             SizedBox(
               height: 25,
             ),
-            button(context,
-                icon: Icons.label_important, text: "导入文件", onPress: () {}),
+            button(icon: Icons.label_important, text: "导入文件", onPress: () {}),
           ],
         ),
       ),

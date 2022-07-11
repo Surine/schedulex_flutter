@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
+import 'package:schedulex_flutter/entity/schedule.dart';
 import 'package:schedulex_flutter/pages/import/backup_import.dart';
 import 'package:schedulex_flutter/pages/import/file_import.dart';
-import 'package:schedulex_flutter/pages/import/jw_import.dart';
+import 'package:schedulex_flutter/pages/import/jw_import/jw_import_card.dart';
 import 'package:schedulex_flutter/pages/import/third_app_import.dart';
+import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
 import 'package:schedulex_flutter/widget/large_title_appbar.dart';
 
@@ -15,17 +18,25 @@ class PageImport extends StatefulWidget {
 }
 
 class _PageImportState extends State<PageImport> {
+  ScheduleController scheduleController = Get.find<ScheduleController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: LargeTitleAppbar(
         title: "导入",
-        actions: [closeButton()],
+        actions: [
+          closeButton(callback: () {
+            if (!scheduleController.hasSchedule()) {
+              scheduleController.addNewSchedule(Schedule()..name = '默认课表');
+            }
+          })
+        ],
         child: Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Column(
-            children: [
+            children: const [
               JWImportCard(),
               SizedBox(
                 height: 4,

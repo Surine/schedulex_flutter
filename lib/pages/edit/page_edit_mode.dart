@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
+import 'package:schedulex_flutter/pages/edit/background_edit.dart';
+import 'package:schedulex_flutter/pages/edit/basic_edit.dart';
+import 'package:schedulex_flutter/pages/edit/course_edit.dart';
+import 'package:schedulex_flutter/pages/edit/timetable_edit.dart';
+import 'package:schedulex_flutter/pages/edit/week_edit.dart';
 
-class PageEditMode extends StatelessWidget {
+class PageEditMode extends StatefulWidget {
   const PageEditMode({Key? key}) : super(key: key);
+
+  @override
+  State<PageEditMode> createState() => _PageEditModeState();
+}
+
+class _PageEditModeState extends State<PageEditMode> {
+  int currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -15,48 +27,15 @@ class PageEditMode extends StatelessWidget {
             Column(
               children: [
                 NavigationBars(
-                  selectedIndex: 0,
+                  selectedIndex: currentPage,
+                  onSelectItem: (index) {
+                    setState(() {
+                      currentPage = index;
+                    });
+                  },
                 ),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      ListTile(
-                        title: Text("测试"),
-                      ),
-                      ListTile(
-                        title: Text("测试"),
-                      ),
-                      ListTile(
-                        title: Text("测试"),
-                      ),
-                      ListTile(
-                        title: Text("测试"),
-                      ),
-                      AboutListTile(
-                        applicationIcon: Icon(Icons.android),
-                        applicationName: "Schedulex",
-                        applicationLegalese: "hah",
-                        child: Text("测试"),
-                      ),
-                      ListTile(
-                        title: Text("测试"),
-                      ),
-                      RadioListTile(
-                        title: Text("测试"),
-                        value: 1,
-                        groupValue: 1,
-                        onChanged: (int? value) {},
-                      ),
-                      SwitchListTile(
-                        title: Text("测试"),
-                        onChanged: (bool value) {},
-                        value: true,
-                      ),
-                      ListTile(
-                        title: Text("测试"),
-                      ),
-                    ],
-                  ),
+                  child: _buildList(),
                 )
               ],
             ),
@@ -77,6 +56,22 @@ class PageEditMode extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildList() {
+    switch (currentPage) {
+      case 0:
+        return const BasicEdit();
+      case 1:
+        return const WeekEdit();
+      case 2:
+        return const BackgroundEdit();
+      case 3:
+        return const CourseEdit();
+      case 4:
+        return const TimeTableEdit();
+    }
+    return Container();
   }
 }
 
@@ -108,9 +103,7 @@ class _NavigationBarsState extends State<NavigationBars> {
       labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
       selectedIndex: _selectedIndex,
       onDestinationSelected: (index) {
-        setState(() {
-          _selectedIndex = index;
-        });
+        _selectedIndex = index;
         widget.onSelectItem!(index);
       },
       destinations: appBarDestinations,

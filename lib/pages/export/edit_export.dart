@@ -58,9 +58,8 @@ class FileExport extends StatelessWidget {
             SizedBox(
               height: 25,
             ),
-            button(context,
-                icon: Icons.mic_external_on, text: "导出", onPress: () {}),
-            button(context,
+            button(icon: Icons.mic_external_on, text: "导出", onPress: () {}),
+            button(
                 icon: Icons.file_copy_outlined, text: "配置目录", onPress: () {}),
           ],
         ),

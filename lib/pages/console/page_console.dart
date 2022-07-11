@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
+import 'package:schedulex_flutter/entity/schedule.dart';
 import 'package:schedulex_flutter/pages/edit/page_edit_mode.dart';
 import 'package:schedulex_flutter/pages/page_export.dart';
 import 'package:schedulex_flutter/pages/page_import.dart';
 import 'package:schedulex_flutter/pages/page_setting.dart';
+import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/function_widget.dart';
 
 class PageConsole extends StatelessWidget {
-  const PageConsole({Key? key}) : super(key: key);
+  final ScheduleController scheduleController;
+
+  Schedule? get schedule => scheduleController.curSchedule;
+
+  const PageConsole({Key? key, required this.scheduleController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

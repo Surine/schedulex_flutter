@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Hello World
 
-Future<SharedPreferences> get sp async => await SharedPreferences.getInstance();
+Future<SharedPreferences> get appSp async =>
+    await SharedPreferences.getInstance();
 
 ColorScheme get colorScheme => Get.context != null
     ? Theme.of(Get.context!).colorScheme

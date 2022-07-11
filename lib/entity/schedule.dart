@@ -1,6 +1,10 @@
+import 'package:floor/floor.dart';
+
 /// 课程表
 
+@entity
 class Schedule {
+  @PrimaryKey(autoGenerate: true)
   int? dbId;
 
   // 课程表名字
