@@ -6,6 +6,7 @@ import 'package:schedulex_flutter/pages/import/backup_import.dart';
 import 'package:schedulex_flutter/pages/import/file_import.dart';
 import 'package:schedulex_flutter/pages/import/jw_import/jw_import_card.dart';
 import 'package:schedulex_flutter/pages/import/third_app_import.dart';
+import 'package:schedulex_flutter/pages/schedule/page_main.dart';
 import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
 import 'package:schedulex_flutter/widget/large_title_appbar.dart';
@@ -29,7 +30,10 @@ class _PageImportState extends State<PageImport> {
         actions: [
           closeButton(callback: () {
             if (!scheduleController.hasSchedule()) {
-              scheduleController.addNewSchedule(Schedule()..name = '默认课表');
+              scheduleController.addNewSchedule(Schedule(), needSelect: true);
+              Get.off(const PageMain());
+            } else {
+              Get.back();
             }
           })
         ],

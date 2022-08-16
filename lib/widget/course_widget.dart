@@ -1,41 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schedulex_flutter/app_base/lang.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/course.dart';
 import 'package:schedulex_flutter/entity/schedule.dart';
+import 'package:schedulex_flutter/entity/timetable.dart';
 
 /// 课程表Widget
+buildCourseData(List<CourseWrapper> course) {
+  final List<List<CourseWrapper>?> divideCourses = [[], [], [], [], [], [], []];
+  for (CourseWrapper courseWrapper in course) {
+    divideCourses[courseWrapper.day - 1]?.add(courseWrapper);
+  }
+  return divideCourses;
+}
 
 class CourseWidget extends StatefulWidget {
   final List<CourseWrapper> course;
   final Schedule schedule;
+  final Future<TimeTable?>? timeTableGetter;
+  final ValueChanged<int>? onWeekChanged;
 
-  const CourseWidget({Key? key, required this.course, required this.schedule})
-      : super(key: key);
+  CourseWidget(
+      {required this.course,
+      required this.schedule,
+      Key? key,
+      this.onWeekChanged,
+      this.timeTableGetter})
+      : maxDay = schedule.isShowWeekend ? 7 : 5,
+        maxSession = schedule.maxSession,
+        sessionSideWidth = schedule.sessionSideWidth,
+        sessionItemHeight = schedule.itemHeight + 2 * 5,
+        weekBarHeight = schedule.weekBarHeight,
+        curWeek = 1,
+        mainColor = hexToColor(schedule.color),
+        divideCourses = buildCourseData(course),
+        super(key: key);
+
+  final int maxDay;
+
+  final int maxSession;
+
+  final int sessionSideWidth;
+
+  final int sessionItemHeight;
+
+  final int weekBarHeight;
+
+  //todo
+  final int curWeek;
+
+  final Color mainColor;
+
+  final List<List<CourseWrapper>?> divideCourses;
 
   @override
   State<CourseWidget> createState() => _CourseWidgetState();
 }
 
 class _CourseWidgetState extends State<CourseWidget> {
-  int get maxDay => widget.schedule.isShowWeekend ? 7 : 5;
-
-  int get maxSession => widget.schedule.maxSession;
-
-  int get sessionSideWidth => widget.schedule.sessionSideWidth;
-
-  int get sessionItemHeight => widget.schedule.itemHeight + 2 * 5;
-
-  int get weekBarHeight => widget.schedule.weekBarHeight;
-
-  List<List<CourseWrapper>?> divideCourses = [[], [], [], [], [], [], []];
+  TimeTable? timeTable;
 
   @override
   void initState() {
     super.initState();
-    for (CourseWrapper courseWrapper in widget.course) {
-      divideCourses[courseWrapper.day - 1]?.add(courseWrapper);
-    }
+    widget.timeTableGetter?.then((value) {
+      timeTable = value;
+    });
   }
 
   @override
@@ -44,7 +75,7 @@ class _CourseWidgetState extends State<CourseWidget> {
       slivers: [
         SliverPersistentHeader(
           delegate: WeekBarSliverPersistentHeaderDelegate(
-              height: weekBarHeight.toDouble(),
+              height: widget.weekBarHeight.toDouble(),
               buildCallback: (BuildContext context, double shrinkOffset,
                   bool overlapsContent) {
                 return buildWeekBar();
@@ -54,7 +85,7 @@ class _CourseWidgetState extends State<CourseWidget> {
         SliverToBoxAdapter(
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           buildTimeBar(),
-          for (var i = 0; i < maxDay; i++) Flexible(child: buildDaySession(i))
+          buildCourse(),
         ])),
         SliverPadding(padding: EdgeInsets.only(bottom: 25))
       ],
@@ -64,35 +95,73 @@ class _CourseWidgetState extends State<CourseWidget> {
   Widget buildWeekBar() {
     return Row(
       children: [
-        SizedBox(width: sessionSideWidth.toDouble(), child: Text("")),
-        for (var i = 0; i < maxDay; i++) Expanded(child: buildDayLabel(i))
+        SizedBox(width: widget.sessionSideWidth.toDouble(), child: Text("")),
+        for (var i = 0; i < widget.maxDay; i++)
+          Expanded(child: buildDayLabel(i))
       ],
     );
   }
 
   Widget buildTimeBar() {
-    return Column(
-      children: [for (var i = 0; i < maxSession; i++) buildSessionLabel(i + 1)],
+    return Container(
+      width: widget.sessionSideWidth.toDouble(),
+      child: Column(
+        children: [
+          for (var i = 0; i < widget.maxSession; i++) buildSessionLabel(i)
+        ],
+      ),
     );
   }
 
   Widget buildDaySession(int index) {
-    if (index < 0 || index >= divideCourses.length) return Container();
-    var curDayCourse = divideCourses[index];
+    if (index < 0 || index >= widget.divideCourses.length) return Container();
+    var curDayCourse = widget.divideCourses[index];
+    if (!(widget.schedule.isShowNotCurWeek)) {
+      curDayCourse =
+          curDayCourse?.where((e) => e.isNotCurWeek(widget.curWeek)).toList();
+    }
     if (curDayCourse == null || curDayCourse.isEmpty) return Container();
-    return SizedBox(
-      height: (sessionItemHeight * maxSession).toDouble(),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          for (var i = 0; i < curDayCourse.length; i++)
-            Positioned(
-              top: ((curDayCourse[i].sectionStart - 1) * sessionItemHeight)
-                  .toDouble(),
-              child: buildCourseItem(course: curDayCourse[i]),
-            )
-        ],
-      ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        for (var i = 0; i < widget.maxSession; i++)
+          Positioned(
+              top: widget.sessionItemHeight * i.toDouble(),
+              child: Container(
+                height: widget.sessionItemHeight.toDouble(),
+                // color: Colors.blue.withOpacity(0.05 * i),
+                child: DragTarget<CourseWrapper>(
+                    onAcceptWithDetails: (details) {
+                  print("slw  ${details.offset}");
+                  Offset offset = details.offset;
+                  // int day = offset.dx - widget.sessionSideWidth / widge;
+                  int session =
+                      ((offset.dy - 140) / widget.sessionItemHeight).toInt();
+                  print("slw 节次$session");
+                }, onAccept: (CourseWrapper value) {
+                  print("slw 接收");
+                }, builder: (BuildContext context, List<Object?> candidateData,
+                        List<dynamic> rejectedData) {
+                  return Container(
+                    width: 100,
+                    height: 100,
+                    // color: Colors.red.withOpacity(0.1),
+                  );
+                }),
+              )),
+        for (var i = 0; i < curDayCourse.length; i++)
+          Positioned(
+            top: ((curDayCourse[i].sectionStart - 1) * widget.sessionItemHeight)
+                .toDouble(),
+            child: LongPressDraggable(
+                data: curDayCourse[i],
+                onDragCompleted: () {
+                  print("slw 被接收");
+                },
+                feedback: buildCourseItem(course: curDayCourse[i]),
+                child: buildCourseItem(course: curDayCourse[i])),
+          )
+      ],
     );
   }
 
@@ -104,29 +173,64 @@ class _CourseWidgetState extends State<CourseWidget> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(180),
             color: Colors.blueGrey.shade100),
-        child: Center(child: Text(list[index])));
+        child: Center(
+            child: Text(
+          list[index],
+          style: TextStyle(color: widget.mainColor),
+        )));
   }
 
   Widget buildSessionLabel(int index) {
-    return Container(
-        width: sessionSideWidth.toDouble(),
-        height: sessionItemHeight.toDouble(),
-        child: Center(child: Text("$index")));
+    String timeTableStr = "";
+    List<PureTime>? pureTimes = timeTable?.getPureTimes();
+    if (pureTimes != null && pureTimes.length > index) {
+      timeTableStr =
+          "${pureTimes[index].startTime}\n${pureTimes[index].endTime}";
+    }
+    return SizedBox(
+        width: widget.sessionSideWidth.toDouble(),
+        height: widget.sessionItemHeight.toDouble(),
+        child: Center(
+            child: Text("${index + 1}\n$timeTableStr",
+                style: TextStyle(color: widget.mainColor))));
   }
 
   Widget buildCourseItem({required CourseWrapper course}) {
     return Container(
-      width: (Get.width - sessionSideWidth) / maxDay - 4,
+      width: (Get.width - widget.sessionSideWidth) / widget.maxDay - 4,
       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
       padding: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-      height: (course.sectionContinue * sessionItemHeight).toDouble(),
+      height: (course.sectionContinue * widget.sessionItemHeight).toDouble(),
       decoration: BoxDecoration(
-        color: Colors.teal,
-        borderRadius: BorderRadius.circular(10),
-      ),
+          color: hexToColor(course.colors)
+              .withOpacity(widget.schedule.alphaForCourseItem / 10),
+          // .withOpacity(course.isNotCurWeek(widget.curWeek) ? 0.1 : 1),
+          borderRadius: BorderRadius.circular(10),
+          border: widget.schedule.itemBorderWidth == 0
+              ? null
+              : Border.all(
+                  color: hexToColor(widget.schedule.itemBorderColor),
+                  width: widget.schedule.itemBorderWidth.toDouble())),
       child: Text(
         course.name ?? "",
         style: textTheme?.bodyMedium?.apply(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget buildCourse() {
+    return SizedBox(
+      width: Get.width - widget.sessionSideWidth.toDouble(),
+      height: widget.sessionItemHeight.toDouble() * widget.maxSession,
+      child: PageView.builder(
+        itemCount: widget.schedule.totalWeek,
+        itemBuilder: (context, index) {
+          return Row(children: [
+            for (var i = 0; i < widget.maxDay; i++)
+              Flexible(child: buildDaySession(i))
+          ]);
+        },
+        onPageChanged: widget.onWeekChanged,
       ),
     );
   }
@@ -156,5 +260,5 @@ class WeekBarSliverPersistentHeaderDelegate
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      false;
+      true;
 }

@@ -8,10 +8,10 @@ class Schedule {
   int? dbId;
 
   // 课程表名字
-  String? name;
+  String name;
 
   // 总共多少周
-  int? totalWeek;
+  int totalWeek;
 
   // 开学时间 yyyyMMdd
   String? termStartDate;
@@ -23,44 +23,75 @@ class Schedule {
   String? imageUrl;
 
   // 是否使用亮色背景
-  bool lightText = false;
+  bool lightText;
 
-  // 是否现实周末
-  bool isShowWeekend = true;
+  // 是否显示周末
+  bool isShowWeekend;
 
   // 课程格子不透明度
-  int alphaForCourseItem = 10;
+  int alphaForCourseItem;
 
   // 最大节次
-  int maxSession = 12;
+  int maxSession;
 
   // 课程高度
-  int itemHeight = 60;
+  int itemHeight;
 
-  // 导入方式
-  int importWay = 0;
+  // 课程格子描边大小
+  int itemBorderWidth;
+
+  // 课程格子描边颜色
+  String itemBorderColor;
 
   // 时间表id
-  int timeTableId = 1;
+  int? timeTableId;
 
   // 是否显示时间
-  bool isShowTime = true;
+  bool isShowTime;
 
   // 课程主题
   int? courseThemeId;
 
   // 文本位置标识
-  int? textAlignFlag;
+  int textAlignFlag;
 
   // 是否显示非本周课程
-  bool isShowNotCurWeek = true;
+  bool isShowNotCurWeek;
 
   // 最大字符隐藏限制
-  int maxHideCharLimit = 6;
+  int maxHideCharLimit;
 
   // 时间栏的侧边宽度
-  int sessionSideWidth = 20;
+  int sessionSideWidth;
 
   // week bar高度
-  int weekBarHeight = 20;
+  int weekBarHeight;
+
+  Schedule(
+      {this.dbId,
+      this.name = '默认课表',
+      this.totalWeek = 24,
+      this.termStartDate,
+      this.color,
+      this.imageUrl,
+      this.lightText = false,
+      this.isShowWeekend = true,
+      this.alphaForCourseItem = 10,
+      this.maxSession = 12,
+      this.itemHeight = 60,
+      this.timeTableId = 0,
+      this.isShowTime = true,
+      this.courseThemeId,
+      this.itemBorderWidth = 0,
+      this.itemBorderColor = 'FFFFFFFF',
+      this.textAlignFlag = 0,
+      this.isShowNotCurWeek = true,
+      this.maxHideCharLimit = 6,
+      this.sessionSideWidth = 30,
+      this.weekBarHeight = 20});
+
+  @override
+  String toString() {
+    return 'Schedule{dbId: $dbId, name: $name, totalWeek: $totalWeek, termStartDate: $termStartDate, color: $color, imageUrl: $imageUrl, lightText: $lightText, isShowWeekend: $isShowWeekend, alphaForCourseItem: $alphaForCourseItem, maxSession: $maxSession, itemHeight: $itemHeight, timeTableId: $timeTableId, isShowTime: $isShowTime, courseThemeId: $courseThemeId, textAlignFlag: $textAlignFlag, isShowNotCurWeek: $isShowNotCurWeek, maxHideCharLimit: $maxHideCharLimit, sessionSideWidth: $sessionSideWidth, weekBarHeight: $weekBarHeight}';
+  }
 }

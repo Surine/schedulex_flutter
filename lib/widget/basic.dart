@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
 
 Widget button(
@@ -46,8 +47,11 @@ Widget closeButton({EdgeInsets? padding, VoidCallback? callback}) {
     padding: padding ?? const EdgeInsets.only(right: 10),
     child: IconButton(
         onPressed: () {
+          if (callback != null) {
+            callback.call();
+            return;
+          }
           Get.back();
-          callback?.call();
         },
         icon: const Icon(Icons.close)),
   );
@@ -61,12 +65,13 @@ void showMaterial3Dialogs({
   String cancelText = "取消",
   VoidCallback? actionPress,
   VoidCallback? cancelPress,
+  Widget? content,
 }) {
   showDialog<void>(
     context: Get.context!,
     builder: (context) => AlertDialog(
       title: Text(title ?? ""),
-      content: Text(subTitle),
+      content: content ?? Text(subTitle),
       actions: <Widget>[
         TextButton(
           child: Text(cancelText),
@@ -85,4 +90,47 @@ void showMaterial3Dialogs({
       ],
     ),
   );
+}
+
+void showMaterial3ColorPicker(
+    {required Color currentColor,
+    required final ValueChanged<Color> onColorChanged}) {
+  showMaterial3Dialogs(
+      title: "选择颜色",
+      content: SingleChildScrollView(
+        child: MaterialPicker(
+          pickerColor: currentColor,
+          onColorChanged: onColorChanged,
+        ),
+      ));
+}
+
+void showMaterial3EditDialog(
+    {String? title,
+    String subTitle = "",
+    String actionText = "确定",
+    String cancelText = "取消",
+    void Function(String)? actionPress,
+    TextInputType? keyboardType,
+    VoidCallback? cancelPress,
+    int? maxLength}) {
+  TextEditingController tx = TextEditingController();
+  showMaterial3Dialogs(
+      title: title,
+      subTitle: subTitle,
+      actionText: actionText,
+      cancelPress: cancelPress,
+      actionPress: () {
+        if (tx.text.trim().isEmpty) return;
+        actionPress?.call(tx.text);
+      },
+      cancelText: cancelText,
+      content: TextField(
+        maxLines: 1,
+        maxLength: maxLength,
+        decoration: InputDecoration(hintText: subTitle),
+        controller: tx,
+        keyboardType: keyboardType,
+        autofocus: true,
+      ));
 }
