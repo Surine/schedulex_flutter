@@ -128,7 +128,7 @@ class _$CourseDao extends CourseDao {
                   'day': item.day,
                   'sectionStart': item.sectionStart,
                   'sectionContinue': item.sectionContinue,
-                  'raWeek': item.raWeek,
+                  'raWeek': item.week,
                   'scheduleId': item.scheduleId,
                   'colors': item.colors
                 }),
@@ -144,7 +144,7 @@ class _$CourseDao extends CourseDao {
                   'day': item.day,
                   'sectionStart': item.sectionStart,
                   'sectionContinue': item.sectionContinue,
-                  'raWeek': item.raWeek,
+                  'raWeek': item.week,
                   'scheduleId': item.scheduleId,
                   'colors': item.colors
                 }),
@@ -160,7 +160,7 @@ class _$CourseDao extends CourseDao {
                   'day': item.day,
                   'sectionStart': item.sectionStart,
                   'sectionContinue': item.sectionContinue,
-                  'raWeek': item.raWeek,
+                  'raWeek': item.week,
                   'scheduleId': item.scheduleId,
                   'colors': item.colors
                 });
@@ -189,7 +189,7 @@ class _$CourseDao extends CourseDao {
             day: row['day'] as int,
             sectionStart: row['sectionStart'] as int,
             sectionContinue: row['sectionContinue'] as int,
-            raWeek: row['raWeek'] as String,
+            week: row['raWeek'] as String,
             colors: row['colors'] as String?,
             scheduleId: row['scheduleId'] as int?),
         arguments: [id]);

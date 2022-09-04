@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
 import 'package:schedulex_flutter/widget/cardview.dart';
+import 'package:schedulex_flutter/widget/help_info.dart';
 import 'package:schedulex_flutter/widget/item_tile.dart';
 
 class BackUpImport extends StatelessWidget {
@@ -14,8 +15,10 @@ class BackUpImport extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ItemTile(
-              showHelp: true,
+            ItemTile(
+              extra: HelpInfoWidget(
+                callback: () {},
+              ),
               iconData: Icons.backup_outlined,
               textStr: "从备份导入",
               iconColor: Colors.deepPurpleAccent,

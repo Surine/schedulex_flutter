@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:schedulex_flutter/app_base/lang.dart';
 import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
+import 'package:schedulex_flutter/widget/list_tile.dart';
 
 class BackgroundEdit extends StatelessWidget {
   BackgroundEdit({Key? key}) : super(key: key);
@@ -26,6 +27,29 @@ class BackgroundEdit extends StatelessWidget {
             },
             title: Text("课表名称"),
             subtitle: Text(sc.curSchedule?.name ?? ""),
+          ),
+          ListTile(
+            title: const Text("选择背景图"),
+            subtitle: Text(sc.curSchedule?.imageUrl ?? ""),
+            onTap: () async {
+              // Pick an image
+              final XFile? image =
+                  await _picker.pickImage(source: ImageSource.gallery);
+              if (image != null) {
+                sc.curSchedule?.imageUrl = image.path;
+                sc.updateEdit();
+              }
+            },
+          ),
+          SliderListTile(
+            title: "课表节次栏宽度",
+            curValue: sc.curSchedule?.sessionSideWidth.toDouble(),
+            onChanged: (value) {
+              sc.curSchedule?.sessionSideWidth = value.toInt();
+              sc.updateEdit();
+            },
+            max: 50,
+            min: 10,
           ),
           ListTile(
             title: const Text("主界面色彩"),
@@ -55,19 +79,6 @@ class BackgroundEdit extends StatelessWidget {
                   });
             },
           ),
-          ListTile(
-            title: const Text("选择背景图"),
-            subtitle: Text(sc.curSchedule?.imageUrl ?? ""),
-            onTap: () async {
-              // Pick an image
-              final XFile? image =
-                  await _picker.pickImage(source: ImageSource.gallery);
-              if (image != null) {
-                sc.curSchedule?.imageUrl = image.path;
-                sc.updateEdit();
-              }
-            },
-          )
         ],
       );
     });

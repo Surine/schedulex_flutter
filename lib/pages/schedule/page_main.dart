@@ -39,6 +39,7 @@ class _PageMainState extends State<PageMain> {
         return GetBuilder<CourseController>(builder: (CourseController cc) {
           Color mainColor = hexToColor(sc.curSchedule?.color);
           return Scaffold(
+            backgroundColor: colorScheme.background,
             body: Stack(
               children: [
                 if (sc.curSchedule?.imageUrl != null)

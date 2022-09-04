@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/schedule.dart';
-import 'package:schedulex_flutter/pages/import/backup_import.dart';
 import 'package:schedulex_flutter/pages/import/file_import.dart';
 import 'package:schedulex_flutter/pages/import/jw_import/jw_import_card.dart';
-import 'package:schedulex_flutter/pages/import/third_app_import.dart';
 import 'package:schedulex_flutter/pages/schedule/page_main.dart';
 import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
@@ -49,11 +47,11 @@ class _PageImportState extends State<PageImport> {
               SizedBox(
                 height: 4,
               ),
-              ThirdAppImport(),
+              // ThirdAppImport(),
               SizedBox(
                 height: 4,
               ),
-              BackUpImport(),
+              // BackUpImport(),
             ],
           ),
         ),

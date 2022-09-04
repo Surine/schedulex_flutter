@@ -1,20 +1,19 @@
 import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/value.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
+import 'package:schedulex_flutter/pages/import/jw_import/jw_import_controller.dart';
 import 'package:schedulex_flutter/pages/page_import.dart';
 import 'package:schedulex_flutter/pages/schedule/course/course_controller.dart';
 import 'package:schedulex_flutter/pages/schedule/page_main.dart';
 import 'package:schedulex_flutter/pages/schedule/timetable/timetable_controller.dart';
 
 import 'pages/schedule/schedule_controller.dart';
-
-final fluro = FluroRouter();
 
 void main() {
   if (Platform.isAndroid) {
@@ -41,6 +40,20 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
               brightness: Brightness.light,
               colorScheme: light ?? defaultColorSchema,
+              switchTheme: SwitchThemeData(
+                  thumbColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return colorScheme.primary;
+                } else {
+                  return Colors.white;
+                }
+              }), trackColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return colorScheme.primary.withOpacity(0.24);
+                } else {
+                  return Colors.grey;
+                }
+              })),
               useMaterial3: true),
           home: const Splash(),
         );
@@ -57,9 +70,10 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  final logic = Get.put(ScheduleController());
+  final schedule = Get.put(ScheduleController());
   final courseLogic = Get.put(CourseController());
   final timetableLogin = Get.put(TimeTableController());
+  final jw = Get.put(JwImportController());
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +100,8 @@ class ScheduleXApp extends StatefulWidget {
   @override
   State<ScheduleXApp> createState() => _ScheduleXAppState();
 }
+
+var keyboardVisibilityController = KeyboardVisibilityController();
 
 class _ScheduleXAppState extends State<ScheduleXApp> {
   final logic = Get.find<ScheduleController>();

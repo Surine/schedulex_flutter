@@ -2,10 +2,10 @@ import 'package:flutter/material.dart' hide CardView;
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/pages/edit/background_edit.dart';
-import 'package:schedulex_flutter/pages/edit/basic_edit.dart';
 import 'package:schedulex_flutter/pages/edit/course_edit.dart';
 import 'package:schedulex_flutter/pages/edit/timetable_edit.dart';
 import 'package:schedulex_flutter/pages/edit/week_edit.dart';
+import 'package:schedulex_flutter/pages/edit/widget_edit.dart';
 import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/cardview.dart';
 

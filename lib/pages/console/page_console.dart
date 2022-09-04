@@ -7,7 +7,6 @@ import 'package:schedulex_flutter/entity/schedule.dart';
 import 'package:schedulex_flutter/pages/edit/page_edit_mode.dart';
 import 'package:schedulex_flutter/pages/page_add_course.dart';
 import 'package:schedulex_flutter/pages/page_export.dart';
-import 'package:schedulex_flutter/pages/page_helper.dart';
 import 'package:schedulex_flutter/pages/page_import.dart';
 import 'package:schedulex_flutter/pages/page_setting.dart';
 import 'package:schedulex_flutter/pages/schedule/course/course_controller.dart';
@@ -37,7 +36,7 @@ class _PageConsoleState extends State<PageConsole> {
   Widget build(BuildContext context) {
     return CardView(
       child: Container(
-        height: 380,
+        height: 350,
         padding: const EdgeInsets.all(18),
         // color: colorScheme.background,
         child: Column(
@@ -109,7 +108,8 @@ class _PageConsoleState extends State<PageConsole> {
             text: "添加",
             color: Colors.blue,
             onTap: () {
-              Get.to(PageAddCourse());
+              Get.back();
+              Get.bottomSheet(PageAddCourse());
             },
           )),
           Flexible(
@@ -132,9 +132,9 @@ class _PageConsoleState extends State<PageConsole> {
             iconData: Icons.ac_unit,
             text: "帮助",
             onTap: () {
-              Get.to(PageHelper());
+              Get.snackbar("提示", "敬请期待!");
             },
-            color: Colors.deepPurpleAccent,
+            color: Colors.grey,
           ))
         ],
       ),
@@ -190,7 +190,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
 
   Widget _buildSchedules() {
     return SizedBox(
-      height: 180,
+      height: 150,
       child: Row(
         children: [
           Expanded(
@@ -221,7 +221,8 @@ class _ScheduleListViewState extends State<ScheduleListView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
-          color: Colors.grey.shade200, borderRadius: BorderRadius.circular(30)),
+          color: colorScheme.background,
+          borderRadius: BorderRadius.circular(30)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -231,7 +232,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                   // margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: _buildNormalDisplay(schedule, index)),
               const SizedBox(
-                width: 10,
+                width: 6,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -260,7 +261,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                         ),
                       )),
                   const SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
                   Container(
                     padding: EdgeInsets.all(8),
@@ -270,22 +271,26 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        showMaterial3Dialogs(title: "警告",subTitle: "此操作不可逆，是否继续?",actionPress: (){
-                          if (data!.length == 1) {
-                            Get.snackbar("提示", "最后一个课表，不允许删除!");
-                            return;
-                          }
-                          widget.scheduleController.deleteSchedule(schedule);
-                          data!.remove(schedule);
-                          var s = data?.first;
-                          if (s != null) {
-                            widget.scheduleController.select(schedule: s);
-                            widget.courseController
-                                .getCurScheduleCourses(s.dbId!);
-                          }
-                          Get.snackbar("提示", "课表删除成功!");
-                          setState(() {});
-                        });
+                        showMaterial3Dialogs(
+                            title: "警告",
+                            subTitle: "此操作不可逆，是否继续?",
+                            actionPress: () {
+                              if (data!.length == 1) {
+                                Get.snackbar("提示", "最后一个课表，不允许删除!");
+                                return;
+                              }
+                              widget.scheduleController
+                                  .deleteSchedule(schedule);
+                              data!.remove(schedule);
+                              var s = data?.first;
+                              if (s != null) {
+                                widget.scheduleController.select(schedule: s);
+                                widget.courseController
+                                    .getCurScheduleCourses(s.dbId!);
+                              }
+                              Get.snackbar("提示", "课表删除成功!");
+                              setState(() {});
+                            });
                       },
                       child: const Icon(
                         Icons.delete,
@@ -326,7 +331,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
               borderRadius: BorderRadius.circular(20),
               child: SizedBox(
                 width: 100,
-                height: 130,
+                height: 100,
                 child: schedule.imageUrl == null
                     ? Container(
                         color: Colors.white,

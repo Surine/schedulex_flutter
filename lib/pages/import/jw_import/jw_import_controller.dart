@@ -1,19 +1,27 @@
 import 'dart:convert';
 import 'dart:core';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Response;
 import 'package:schedulex_flutter/app_base/value.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/university_info.dart';
+import 'package:schedulex_flutter/pages/import/jw_import/adapter_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+const baseParseSource = "https://gitee.com/su-su-0627/edu_parser/raw/main/";
+const parseSource = "${baseParseSource}parsers/";
 
 /// 导入教务控制器
 class JwImportController extends GetxController {
-  Schools? university;
+  Schools? curUniversity;
   bool? isPostgraduate;
   late SharedPreferences sp;
   late final List<Schools> allSchoolList = [];
+  AdapterInfo? curSelectAdapterInfo;
+
+  String get universityPath => "${curUniversity?.name}_${curUniversity?.code}";
 
   @override
   Future<void> onInit() async {
@@ -26,20 +34,45 @@ class JwImportController extends GetxController {
       sp = await appSp;
       String? name = sp.getString(keyUniversity);
       if (name != null) {
-        university = allSchoolList
+        curUniversity = allSchoolList
             .firstWhere((element) => name.endsWith(element.name ?? ""));
         isPostgraduate = name.startsWith("-");
       }
-      update();
+      if (curUniversity != null) {
+        loadAdapterStatus(curUniversity!).then((value) {
+          update();
+        });
+      } else {
+        update();
+      }
     });
   }
 
   /// 改变您的学校[university]
-  void changeSchool(Schools university, int schoolType) {
-    this.university = university;
+  void changeSchool(Schools university, int schoolType) async {
+    curUniversity = university;
     // 如果是研究生在前面补充一个 - ，这样不用存两个sp
     sp.setString(
         keyUniversity, (schoolType == 2 ? "-" : "") + (university.name ?? ""));
-    update();
+    loadAdapterStatus(university).then((value) {
+      update();
+    });
+  }
+
+  Future<AdapterInfo?> loadAdapterStatus(Schools university) async {
+    // todo 封装dio util
+    Response? res;
+    try {
+      String url = "$parseSource$universityPath/parse_config.json";
+      Dio dio = Dio();
+      dio.interceptors.add(LogInterceptor());
+      res = await dio.get(url);
+    } catch (e) {}
+    if (res == null || res.data == null) {
+      curSelectAdapterInfo = null;
+      return null;
+    }
+    curSelectAdapterInfo = AdapterInfo.fromJson(res.data);
+    return curSelectAdapterInfo;
   }
 }

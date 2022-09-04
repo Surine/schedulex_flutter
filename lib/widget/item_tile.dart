@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/widget/colorful_icon.dart';
-import 'package:schedulex_flutter/widget/help_info.dart';
 
 /// item tile
 
@@ -14,21 +13,19 @@ class ItemTile extends StatelessWidget {
   final IconData? iconData;
   final String? textStr;
   final String? subtitleStr;
-  final bool? showHelp;
-  final VoidCallback? onTapHelp;
+  final Widget? extra;
 
-  const ItemTile(
-      {Key? key,
-      this.icon,
-      this.title,
-      this.subtitle,
-      this.textStr,
-      this.subtitleStr,
-      this.iconData,
-      this.iconColor,
-      this.showHelp = true,
-      this.onTapHelp})
-      : super(key: key);
+  const ItemTile({
+    Key? key,
+    this.icon,
+    this.title,
+    this.subtitle,
+    this.textStr,
+    this.subtitleStr,
+    this.iconData,
+    this.iconColor,
+    this.extra,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +64,7 @@ class ItemTile extends StatelessWidget {
             ],
           ),
         ),
-        if (showHelp ?? false) HelpInfoWidget(callback: onTapHelp)
+        if (extra != null) extra!
       ],
     );
   }

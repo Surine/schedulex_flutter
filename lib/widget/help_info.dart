@@ -24,13 +24,13 @@ class HelpInfoWidget extends StatelessWidget {
           },
       child: Row(
         children: [
-          if (showIcon ?? true)
+          if (/*showIcon ?? true*/ false)
             const ColorfulIcon(
               iconData: Icons.help,
               color: Colors.blueGrey,
               size: 20,
             ),
-          if (showIcon ?? true || info != null)
+          if (/*showIcon ?? true*/ false)
             const SizedBox(
               width: 6,
             ),

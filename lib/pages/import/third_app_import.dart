@@ -14,7 +14,6 @@ class ThirdAppImport extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const ItemTile(
-              showHelp: true,
               iconData: Icons.apps_sharp,
               textStr: "从三方App导入",
               subtitleStr: "请低调食用～",

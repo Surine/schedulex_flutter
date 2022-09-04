@@ -17,7 +17,7 @@ class _PageSelectSchoolState extends State<PageSelectSchool> {
   int _currentSchoolType = 1; //1 本科，2研究生
   TextEditingController editingController = TextEditingController();
   final List<Schools> _recommendSchool = [];
-  final double _itemHeight = 40.0;
+  final double _itemHeight = 60.0;
   final ScrollController _scrollController = ScrollController();
   JwImportController jwImportController = Get.find<JwImportController>();
 
@@ -46,12 +46,12 @@ class _PageSelectSchoolState extends State<PageSelectSchool> {
       title: "请输入学校名称",
       actions: [closeButton()],
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 70,
+              height: 60,
               child: TextField(
                 maxLines: 1,
                 autofocus: true,
@@ -93,7 +93,7 @@ class _PageSelectSchoolState extends State<PageSelectSchool> {
             ),
             AnimatedContainer(
               height: height,
-              constraints: const BoxConstraints(maxHeight: 200),
+              constraints: const BoxConstraints(maxHeight: 250),
               duration: const Duration(milliseconds: 100),
               child: _buildRecommendList(),
             ),
@@ -134,7 +134,8 @@ class _PageSelectSchoolState extends State<PageSelectSchool> {
   Widget _buildRecommendList() {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
+          color: colorScheme.secondaryContainer.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(20)),
       child: ListView(
         controller: _scrollController,
         itemExtent: _itemHeight,
@@ -144,6 +145,7 @@ class _PageSelectSchoolState extends State<PageSelectSchool> {
           for (var i = 0; i < _recommendSchool.length; i++)
             ListTile(
               title: Text(_recommendSchool[i].name ?? ""),
+              subtitle: Text(_recommendSchool[i].city ?? ""),
               onTap: () {
                 jwImportController.changeSchool(
                     _recommendSchool[i], _currentSchoolType);

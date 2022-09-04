@@ -82,15 +82,15 @@ class CourseEdit extends StatelessWidget {
                   });
             },
           ),
-          ListTile(
-            title: Text("课程主题"),
-          ),
-          ListTile(
-            title: Text("课程字数省略号限制"),
-          ),
-          ListTile(
-            title: Text("文本内容定位"),
-          ),
+          // ListTile(
+          //   title: Text("课程主题"),
+          // ),
+          // ListTile(
+          //   title: Text("课程字数省略号限制"),
+          // ),
+          // ListTile(
+          //   title: Text("文本内容定位"),
+          // ),
         ],
       );
     });

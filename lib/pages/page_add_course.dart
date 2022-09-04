@@ -7,7 +7,6 @@ import 'package:schedulex_flutter/pages/schedule/course/course_controller.dart';
 import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
 import 'package:schedulex_flutter/widget/cardview.dart';
-import 'package:schedulex_flutter/widget/large_title_appbar.dart';
 
 class PageAddCourse extends StatefulWidget {
   const PageAddCourse({Key? key}) : super(key: key);
@@ -16,66 +15,115 @@ class PageAddCourse extends StatefulWidget {
   State<PageAddCourse> createState() => _PageAddCourseState();
 }
 
-class _PageAddCourseState extends State<PageAddCourse> {
+class _PageAddCourseState extends State<PageAddCourse>
+    with SingleTickerProviderStateMixin {
   List<CourseWrapper> wrapperDatas = [CourseWrapper()];
   ScheduleController scheduleController = Get.find<ScheduleController>();
   CourseController courseController = Get.find<CourseController>();
   Color _curColor = Colors.blueGrey;
   String _curCourseName = "未填写";
 
+  late TabController tabController;
+
   @override
   void initState() {
     super.initState();
+    tabController = TabController(length: wrapperDatas.length, vsync: this);
+  }
+
+  @override
+  void didUpdateWidget(PageAddCourse oldWidget) {
+    tabController = TabController(length: wrapperDatas.length, vsync: this);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  Widget buildTop() {
+    return Row(
+      children: [
+        Text(
+          "添加课程",
+          style: textTheme?.headline4,
+        ),
+        const Spacer(),
+        closeButton()
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    tabController.dispose();
+  }
+
+  Widget buildTabBar() {
+    return TabBar(isScrollable: true, controller: tabController, tabs: [
+      Tab(
+        text: "测试1",
+      )
+    ]);
+  }
+
+  Widget buildTabView() {
+    return Container(
+      height: 300,
+      child: TabBarView(controller: tabController, children: [
+        ...wrapperDatas
+            .map(
+                (e) => SingleChildScrollView(child: _buildCourseSessionInfo(e)))
+            .toList()
+      ]),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: colorScheme.background,
-      floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            _saveCourse();
-          },
-          icon: const Icon(Icons.check),
-          label: const Text("确定")),
-      body: Container(
-        padding: const EdgeInsets.all(10),
-        child: LargeTitleAppbar(
-          title: '添加课程',
-          actions: [closeButton()],
-          slivers: [
-            SliverToBoxAdapter(
-              child: _buildCourseName(),
-            ),
-            SliverToBoxAdapter(
-              child: Row(
-                children: [
-                  Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        wrapperDatas.add(CourseWrapper());
-                      });
-                    },
-                    child: CardView(
-                        child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 6),
-                            child: Text("添加"))),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  )
-                ],
-              ),
-            ),
-            SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-              return _buildCourseSessionInfo(wrapperDatas[index]);
-            }, childCount: wrapperDatas.length))
-          ],
-        ),
-      ),
+    return CardView(
+      child: Container(
+          padding: const EdgeInsets.only(left: 18, top: 18, bottom: 18),
+          child: Column(
+            children: [
+              buildTop(),
+              buildTabBar(),
+              buildTabView(),
+            ],
+          )
+          // child: LargeTitleAppbar(
+          //   title: '添加课程',
+          //   actions: [closeButton()],
+          //   slivers: [
+          //     SliverToBoxAdapter(
+          //       child: _buildCourseName(),
+          //     ),
+          //     SliverToBoxAdapter(
+          //       child: Row(
+          //         children: [
+          //           Spacer(),
+          //           GestureDetector(
+          //             onTap: () {
+          //               setState(() {
+          //                 wrapperDatas.add(CourseWrapper());
+          //               });
+          //             },
+          //             child: CardView(
+          //                 child: Container(
+          //                     padding: EdgeInsets.symmetric(
+          //                         vertical: 4, horizontal: 6),
+          //                     child: Text("添加"))),
+          //           ),
+          //           SizedBox(
+          //             width: 10,
+          //           )
+          //         ],
+          //       ),
+          //     ),
+          //     SliverList(
+          //         delegate: SliverChildBuilderDelegate((context, index) {
+          //       return _buildCourseSessionInfo(wrapperDatas[index]);
+          //     }, childCount: wrapperDatas.length))
+          //   ],
+          // ),
+          ),
     );
   }
 
@@ -209,7 +257,7 @@ class _PageAddCourseState extends State<PageAddCourse> {
       wrapperDatas[i].scheduleId = scheduleController.curScheduleId;
     }
     List<int> list = await courseController.insertCourses(
-        wrapperDatas.where((element) => element.week.isNotEmpty).toList());
+        wrapperDatas.where((element) => element.weekList.isNotEmpty).toList());
     if (list.isNotEmpty) {
       Get.back();
       Get.snackbar("提示", "添加成功");
@@ -240,7 +288,7 @@ class _CourseTimeScheduleState extends State<CourseTimeSchedule> {
   @override
   void initState() {
     super.initState();
-    selectIndex.addAll(widget.wrapperData.week);
+    selectIndex.addAll(widget.wrapperData.weekList);
     _weekController =
         FixedExtentScrollController(initialItem: widget.wrapperData.day - 1);
     _sessionStartController = FixedExtentScrollController(
@@ -320,7 +368,7 @@ class _CourseTimeScheduleState extends State<CourseTimeSchedule> {
                 }
                 selectIndex.sort();
                 setState(() {
-                  widget.wrapperData.raWeek = selectIndex.join(",");
+                  widget.wrapperData.week = selectIndex.join(",");
                 });
               },
               child: Container(
@@ -437,7 +485,7 @@ class _CourseTimeScheduleState extends State<CourseTimeSchedule> {
               }
             }
             setState(() {
-              widget.wrapperData.raWeek = selectIndex.join(",");
+              widget.wrapperData.week = selectIndex.join(",");
             });
           },
           child: Container(
@@ -461,7 +509,7 @@ class _CourseTimeScheduleState extends State<CourseTimeSchedule> {
               }
             }
             setState(() {
-              widget.wrapperData.raWeek = selectIndex.join(",");
+              widget.wrapperData.week = selectIndex.join(",");
             });
           },
           child: Container(
@@ -483,7 +531,7 @@ class _CourseTimeScheduleState extends State<CourseTimeSchedule> {
               selectIndex.add(i);
             }
             setState(() {
-              widget.wrapperData.raWeek = selectIndex.join(",");
+              widget.wrapperData.week = selectIndex.join(",");
             });
           },
           child: Container(

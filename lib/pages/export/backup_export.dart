@@ -15,7 +15,6 @@ class BackUpExport extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const ItemTile(
-              showHelp: true,
               iconData: Icons.backup_outlined,
               textStr: "从备份导出",
               subtitleStr: "选择本地备份或者云端备份导出",
