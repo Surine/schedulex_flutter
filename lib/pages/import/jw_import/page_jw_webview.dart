@@ -373,7 +373,7 @@ class _PageJwWebViewState extends State<PageJwWebView> {
             showMaterial3Dialogs(
                 title: "提示", subTitle: "解析失败，暂未有解析脚本返回结果，请添加QQ群反馈或者等待适配。");
           } else {
-            Get.to(PageParseResult(results));
+            Get.to(() => PageParseResult(results));
           }
         },
         child: const Icon(Icons.check),

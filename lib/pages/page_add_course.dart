@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/lang.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/course.dart';
+import 'package:schedulex_flutter/pages/import/jw_import/page_parse_result.dart';
 import 'package:schedulex_flutter/pages/schedule/course/course_controller.dart';
 import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
@@ -17,7 +18,10 @@ class PageAddCourse extends StatefulWidget {
 
 class _PageAddCourseState extends State<PageAddCourse>
     with SingleTickerProviderStateMixin {
-  List<CourseWrapper> wrapperDatas = [CourseWrapper()];
+  List<CourseWrapper> wrapperDatas = [
+    CourseWrapper(name: "新课程"),
+    CourseWrapper(name: "新课程"),
+  ];
   ScheduleController scheduleController = Get.find<ScheduleController>();
   CourseController courseController = Get.find<CourseController>();
   Color _curColor = Colors.blueGrey;
@@ -57,20 +61,41 @@ class _PageAddCourseState extends State<PageAddCourse>
   }
 
   Widget buildTabBar() {
-    return TabBar(isScrollable: true, controller: tabController, tabs: [
-      Tab(
-        text: "测试1",
-      )
-    ]);
+    return TabBar(
+        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+        unselectedLabelColor: colorScheme.primary,
+        indicatorSize: TabBarIndicatorSize.label,
+        indicator: BoxDecoration(
+          color: colorScheme.primary,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        controller: tabController,
+        isScrollable: true,
+        tabs: wrapperDatas
+            .map(
+              (e) => Tab(
+                height: 30,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(e.name ?? "无课程名"),
+                  ),
+                ),
+              ),
+            )
+            .toList());
   }
 
   Widget buildTabView() {
     return Container(
-      height: 300,
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: TabBarView(controller: tabController, children: [
         ...wrapperDatas
-            .map(
-                (e) => SingleChildScrollView(child: _buildCourseSessionInfo(e)))
+            .map((e) => SingleChildScrollView(
+                    child: Column(
+                  children: [_buildCourseName(), _buildCourseSessionInfo(e)],
+                )))
             .toList()
       ]),
     );
@@ -78,52 +103,38 @@ class _PageAddCourseState extends State<PageAddCourse>
 
   @override
   Widget build(BuildContext context) {
-    return CardView(
-      child: Container(
-          padding: const EdgeInsets.only(left: 18, top: 18, bottom: 18),
-          child: Column(
-            children: [
-              buildTop(),
-              buildTabBar(),
-              buildTabView(),
-            ],
-          )
-          // child: LargeTitleAppbar(
-          //   title: '添加课程',
-          //   actions: [closeButton()],
-          //   slivers: [
-          //     SliverToBoxAdapter(
-          //       child: _buildCourseName(),
-          //     ),
-          //     SliverToBoxAdapter(
-          //       child: Row(
-          //         children: [
-          //           Spacer(),
-          //           GestureDetector(
-          //             onTap: () {
-          //               setState(() {
-          //                 wrapperDatas.add(CourseWrapper());
-          //               });
-          //             },
-          //             child: CardView(
-          //                 child: Container(
-          //                     padding: EdgeInsets.symmetric(
-          //                         vertical: 4, horizontal: 6),
-          //                     child: Text("添加"))),
-          //           ),
-          //           SizedBox(
-          //             width: 10,
-          //           )
-          //         ],
-          //       ),
-          //     ),
-          //     SliverList(
-          //         delegate: SliverChildBuilderDelegate((context, index) {
-          //       return _buildCourseSessionInfo(wrapperDatas[index]);
-          //     }, childCount: wrapperDatas.length))
-          //   ],
-          // ),
-          ),
+    return Scaffold(
+      backgroundColor: colorScheme.background,
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              expandedHeight: 160,
+              pinned: true,
+              actions: [closeButton()],
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: const EdgeInsets.only(left: 30, bottom: 16),
+                title: Text(
+                  "添加课程",
+                  style: TextStyle(color: colorScheme.onBackground),
+                ),
+              ),
+            ),
+            SliverPersistentHeader(
+                delegate: FixHeightSliverPersistentHeaderDelegate(
+              height: 64,
+              child: Theme(
+                data: ThemeData(splashColor: Colors.transparent),
+                child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    child: buildTabBar()),
+              ),
+            ))
+          ];
+        },
+        body: buildTabView(),
+      ),
     );
   }
 

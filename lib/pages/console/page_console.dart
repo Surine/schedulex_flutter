@@ -90,6 +90,7 @@ class _PageConsoleState extends State<PageConsole> {
             text: "导入",
             color: Colors.green,
             onTap: () {
+              Get.back();
               Get.to(PageImport());
             },
           )),
@@ -99,6 +100,7 @@ class _PageConsoleState extends State<PageConsole> {
             text: "导出",
             color: Colors.deepOrangeAccent,
             onTap: () {
+              Get.back();
               Get.to(PageExport());
             },
           )),
@@ -109,7 +111,7 @@ class _PageConsoleState extends State<PageConsole> {
             color: Colors.blue,
             onTap: () {
               Get.back();
-              Get.bottomSheet(PageAddCourse());
+              Get.to(PageAddCourse());
             },
           )),
           Flexible(
@@ -343,7 +345,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
               ),
             ),
           ),
-          Positioned(left: 50, top: 50, child: Text(schedule.dbId.toString()))
+          // Positioned(left: 50, top: 50, child: Text(schedule.dbId.toString()))
         ],
       ),
     );

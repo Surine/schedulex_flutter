@@ -57,10 +57,10 @@ class _JWImportCardState extends State<JWImportCard> {
                 FloatingActionButton.large(
                   backgroundColor: colorScheme.primary,
                   elevation: 0,
-                  onPressed: () {
+                  onPressed: () async {
                     // 已选择学校
                     if (logic.curUniversity != null) {
-                      Get.to(const PageJwWebView(),
+                      await Get.to(const PageJwWebView(),
                           transition: defaultRouteTransition,
                           arguments: {
                             "url": logic.curSelectAdapterInfo?.jwUrl,
