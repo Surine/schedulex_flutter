@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/lang.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/course.dart';
+import 'package:schedulex_flutter/entity/schedule.dart';
 import 'package:schedulex_flutter/pages/schedule/course/course_controller.dart';
 import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
@@ -44,10 +45,24 @@ class _PageParseResultState extends State<PageParseResult>
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: colorScheme.secondaryContainer,
         onPressed: () {
-          saveData();
+          if (_scheduleController.curSchedule != null) {
+            showMaterial3Dialogs(
+                title: "提示",
+                subTitle: "导入后，与当前选中的课表相关联的数据都会被覆盖，是否继续？",
+                actionText: "继续",
+                actionPress: () {
+                  saveData();
+                },
+                cancelText: "新建一个课表",
+                cancelPress: () {
+                  saveData(needToNew: true);
+                });
+          } else {
+            saveData();
+          }
         },
-        label: Text("导入此页"),
-        icon: Icon(Icons.download_done_outlined),
+        label: const Text("导入此页"),
+        icon: const Icon(Icons.download_done_outlined),
       ),
       body: SafeArea(
         child: Padding(
@@ -58,7 +73,7 @@ class _PageParseResultState extends State<PageParseResult>
                 child: Container(
                   child: Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Text("信息核对", style: textTheme?.headline5?.copyWith()),
@@ -75,7 +90,7 @@ class _PageParseResultState extends State<PageParseResult>
                     radius: 4,
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      child: Text(
+                      child: const Text(
                           "请仔细核对解析结果以免有细节问题耽误上课，如果有多个解析器结果，选择正确的导入即可,如果有错误欢迎加QQ群反馈。"),
                     ),
                   ),
@@ -163,18 +178,29 @@ class _PageParseResultState extends State<PageParseResult>
     );
   }
 
-  final List<Color> defaultColor = [
-    Colors.red,
-    Colors.teal,
-    Colors.blue,
-    Colors.green,
-    Colors.orange,
-    Colors.yellow,
-    Colors.deepPurple,
-    Colors.lightGreen
+  final List<String> defaultColor = [
+    "A992FE",
+    "FDDF4E",
+    "5EEFA0",
+    "FFA17D",
+    "D68DF9",
+    "86B0FC",
+    "FC9586",
+    "65BFEA",
+    "659DEA",
+    "6A65EA",
+    "A97CF8",
+    "E891F3",
+    "F391D5",
+    "F391B4",
+    "F39193",
+    "96C487",
+    "87C2C4"
   ];
+
   final Map<String, Color> colorMap = {};
-  Future<void> saveData() async {
+
+  Future<void> saveData({bool needToNew = false}) async {
     colorMap.clear();
     String? e =
         widget.results[widget.results.keys.toList()[tabController?.index ?? 0]];
@@ -182,18 +208,27 @@ class _PageParseResultState extends State<PageParseResult>
     List<CourseWrapper> courseData = [];
     List<dynamic> result = jsonDecode(e);
     var random = Random();
+    int? id = _scheduleController.curScheduleId;
+    if (needToNew) {
+      id = await _scheduleController.addNewSchedule(Schedule(),
+          needSelect: true);
+    }
     for (var e in result) {
-      CourseWrapper courseWrapper = CourseWrapper.fromJson(e)
-        ..scheduleId = _scheduleController.curScheduleId;
+      CourseWrapper courseWrapper = CourseWrapper.fromJson(e)..scheduleId = id;
 
       if (colorMap.containsKey(courseWrapper.name)) {
         courseWrapper.colors = colorMap[courseWrapper.name]!.str;
       } else {
-        Color color = defaultColor[random.nextInt(defaultColor.length - 1)];
+        Color color =
+            hexToColor(defaultColor[random.nextInt(defaultColor.length - 1)]);
         courseWrapper.colors = color.str;
         colorMap[courseWrapper.name!] = color;
       }
       courseData.add(courseWrapper);
+    }
+    if (_scheduleController.curScheduleId != null) {
+      await _courseController
+          .deleteCoursesByScheduleId(_scheduleController.curScheduleId!);
     }
     await _courseController.insertCourses(courseData);
     Navigator.popUntil(context,
@@ -224,5 +259,5 @@ class FixHeightSliverPersistentHeaderDelegate
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      false;
+      true;
 }

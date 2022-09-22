@@ -21,6 +21,6 @@ abstract class CourseDao {
   @delete
   Future<int> deleteCourseWrapper(CourseWrapper courseWrapper);
 
-  @delete
-  Future<void> deleteCourseWrappers(List<CourseWrapper> courseWrapper);
+  @Query("DELETE * FROM CourseWrapper where scheduleId = :id")
+  Future<void> deleteCourseWrappersByScheduleId(int id);
 }

@@ -1,6 +1,13 @@
 /// 今天星期几？
 var nowWeekDay = DateTime.now().weekday;
 
+const weeks = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+
+extension IntExt on int {
+  String get weekDayStr =>
+      this >= 1 && this <= 7 ? weeks[this - 1] : 'Invalid Argument';
+}
+
 /// now
 var now = DateTime.now().millisecondsSinceEpoch;
 

@@ -191,16 +191,29 @@ class _CourseWidgetState extends State<CourseWidget> {
         width: widget.sessionSideWidth.toDouble(),
         height: widget.sessionItemHeight.toDouble(),
         child: Center(
-            child: Text("${index + 1}\n$timeTableStr",
-                style: TextStyle(color: widget.mainColor))));
+            child: Column(
+          children: [
+            Text("${index + 1}", style: TextStyle(color: widget.mainColor)),
+            Text(
+              timeTableStr,
+              style: TextStyle(color: widget.mainColor, fontSize: 10),
+            )
+          ],
+        )));
   }
 
   Widget buildCourseItem({required CourseWrapper course}) {
+    String displayInfo = "";
+    if ((course.name?.length ?? 0) > 6) {
+      displayInfo = '${course.name!.substring(0, 6)}...';
+    }
+    displayInfo = '$displayInfo@${course.position}';
     return Container(
       width: (Get.width - widget.sessionSideWidth) / widget.maxDay - 4,
-      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-      height: (course.sectionContinue * widget.sessionItemHeight).toDouble(),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+      height:
+          (course.sectionContinue * widget.sessionItemHeight).toDouble() - 6,
       decoration: BoxDecoration(
           color: hexToColor(course.colors)
               .withOpacity(widget.schedule.alphaForCourseItem / 10),
@@ -212,8 +225,8 @@ class _CourseWidgetState extends State<CourseWidget> {
                   color: hexToColor(widget.schedule.itemBorderColor),
                   width: widget.schedule.itemBorderWidth.toDouble())),
       child: Text(
-        course.name ?? "",
-        style: textTheme?.bodyMedium?.apply(color: Colors.white),
+        displayInfo,
+        style: textTheme?.bodySmall?.apply(color: Colors.white),
       ),
     );
   }

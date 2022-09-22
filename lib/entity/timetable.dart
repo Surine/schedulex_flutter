@@ -29,7 +29,7 @@ extension TimeTableExt on TimeTable {
   List<PureTime> getPureTimes() {
     List<PureTime> times = [];
     var result = rule.split(",");
-    for (var r = 0; r <= result.length / 2; r += 2) {
+    for (var r = 0; r < result.length; r += 2) {
       PureTime pureTime = PureTime("", "");
       pureTime.startTime = wrapperTime(toTimeStr(int.parse(result[r])));
       pureTime.endTime = wrapperTime(toTimeStr(int.parse(result[r + 1])));

@@ -81,7 +81,7 @@ class _SplashState extends State<Splash> {
       width: Get.size.width,
       height: Get.size.height,
       color: Colors.white,
-      child: FlutterLogo(),
+      child: Image.asset("assets/ic_launcher_round.png"),
     );
   }
 

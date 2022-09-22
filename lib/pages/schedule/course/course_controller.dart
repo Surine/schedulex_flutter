@@ -30,4 +30,8 @@ class CourseController extends GetxController {
     getCurScheduleCourses(sp.getInt(currentScheduleIdTag) ?? -1);
     return result;
   }
+
+  Future<void> deleteCoursesByScheduleId(int scheduleId) async {
+    return await db.courseDao.deleteCourseWrappersByScheduleId(scheduleId);
+  }
 }

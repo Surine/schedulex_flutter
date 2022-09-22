@@ -49,7 +49,7 @@ class BackgroundEdit extends StatelessWidget {
               sc.updateEdit();
             },
             max: 50,
-            min: 10,
+            min: 30,
           ),
           ListTile(
             title: const Text("主界面色彩"),

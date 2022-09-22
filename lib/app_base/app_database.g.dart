@@ -86,7 +86,7 @@ class _$AppDataBase extends AppDataBase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `CourseWrapper` (`dbId` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `position` TEXT, `teacher` TEXT, `day` INTEGER NOT NULL, `sectionStart` INTEGER NOT NULL, `sectionContinue` INTEGER NOT NULL, `raWeek` TEXT NOT NULL, `scheduleId` INTEGER, `colors` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `CourseWrapper` (`dbId` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `position` TEXT, `teacher` TEXT, `day` INTEGER NOT NULL, `sectionStart` INTEGER NOT NULL, `sectionContinue` INTEGER NOT NULL, `week` TEXT NOT NULL, `scheduleId` INTEGER, `colors` TEXT)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Schedule` (`dbId` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `totalWeek` INTEGER NOT NULL, `termStartDate` TEXT, `color` TEXT, `imageUrl` TEXT, `lightText` INTEGER NOT NULL, `isShowWeekend` INTEGER NOT NULL, `alphaForCourseItem` INTEGER NOT NULL, `maxSession` INTEGER NOT NULL, `itemHeight` INTEGER NOT NULL, `itemBorderWidth` INTEGER NOT NULL, `itemBorderColor` TEXT NOT NULL, `timeTableId` INTEGER, `isShowTime` INTEGER NOT NULL, `courseThemeId` INTEGER, `textAlignFlag` INTEGER NOT NULL, `isShowNotCurWeek` INTEGER NOT NULL, `maxHideCharLimit` INTEGER NOT NULL, `sessionSideWidth` INTEGER NOT NULL, `weekBarHeight` INTEGER NOT NULL)');
         await database.execute(
@@ -128,7 +128,7 @@ class _$CourseDao extends CourseDao {
                   'day': item.day,
                   'sectionStart': item.sectionStart,
                   'sectionContinue': item.sectionContinue,
-                  'raWeek': item.week,
+                  'week': item.week,
                   'scheduleId': item.scheduleId,
                   'colors': item.colors
                 }),
@@ -144,7 +144,7 @@ class _$CourseDao extends CourseDao {
                   'day': item.day,
                   'sectionStart': item.sectionStart,
                   'sectionContinue': item.sectionContinue,
-                  'raWeek': item.week,
+                  'week': item.week,
                   'scheduleId': item.scheduleId,
                   'colors': item.colors
                 }),
@@ -160,7 +160,7 @@ class _$CourseDao extends CourseDao {
                   'day': item.day,
                   'sectionStart': item.sectionStart,
                   'sectionContinue': item.sectionContinue,
-                  'raWeek': item.week,
+                  'week': item.week,
                   'scheduleId': item.scheduleId,
                   'colors': item.colors
                 });
@@ -189,9 +189,16 @@ class _$CourseDao extends CourseDao {
             day: row['day'] as int,
             sectionStart: row['sectionStart'] as int,
             sectionContinue: row['sectionContinue'] as int,
-            week: row['raWeek'] as String,
+            week: row['week'] as String,
             colors: row['colors'] as String?,
             scheduleId: row['scheduleId'] as int?),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteCourseWrappersByScheduleId(int id) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE * FROM CourseWrapper where scheduleId = ?1',
         arguments: [id]);
   }
 
@@ -223,11 +230,6 @@ class _$CourseDao extends CourseDao {
   Future<int> deleteCourseWrapper(CourseWrapper courseWrapper) {
     return _courseWrapperDeletionAdapter
         .deleteAndReturnChangedRows(courseWrapper);
-  }
-
-  @override
-  Future<void> deleteCourseWrappers(List<CourseWrapper> courseWrapper) async {
-    await _courseWrapperDeletionAdapter.deleteList(courseWrapper);
   }
 }
 

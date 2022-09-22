@@ -275,7 +275,7 @@ class _PageJwWebViewState extends State<PageJwWebView> {
   Widget _buildBottomBar() {
     return BottomAppBar(
       color: colorScheme.background,
-      shape: CircularNotchedRectangle(),
+      shape: const CircularNotchedRectangle(),
       child: Stack(
         children: [
           Container(
@@ -292,16 +292,23 @@ class _PageJwWebViewState extends State<PageJwWebView> {
                       borderRadius: BorderRadius.circular(40)),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.arrow_back_ios,
-                        size: 20,
+                      GestureDetector(
+                        onTap: () async {
+                          if (await webController?.canGoBack() ?? false) {
+                            webController?.goBack();
+                          }
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios,
+                          size: 20,
+                        ),
                       ),
-                      SizedBox(
-                        width: 20,
+                      const SizedBox(
+                        width: 30,
                       ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
+                      GestureDetector(
+                        onTap: () {},
+                        child: Icon(Icons.info_outline),
                       ),
                     ],
                   ),
@@ -313,7 +320,6 @@ class _PageJwWebViewState extends State<PageJwWebView> {
                 SizedBox(
                   width: 30,
                 ),
-                Icon(Icons.info_outline),
               ],
             ),
           ),

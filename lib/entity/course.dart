@@ -89,11 +89,11 @@ extension CourseWrapperExt on CourseWrapper {
   List<int> get weekList =>
       week == "" ? [] : week.split(",").map((e) => int.parse(e)).toList();
 
-  String get planDisplay => week.isEmpty &&
+  String? get planDisplay => week.isEmpty &&
           day == 1 &&
           sectionStart == 0 &&
           sectionContinue == 1
-      ? "还没有安排本课程的时间"
+      ? null
       : "$week周, 周$day,第$sectionStart节 - 第${sectionStart + sectionContinue - 1}节";
 
   /// 非本周
