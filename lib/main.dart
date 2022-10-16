@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
       child: DynamicColorBuilder(builder: (light, dark) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
+          locale: Get.deviceLocale,
           title: 'ScheduleX',
           theme: ThemeData(
               brightness: Brightness.light,

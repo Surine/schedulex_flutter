@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
-import 'package:schedulex_flutter/pages/export/backup_export.dart';
 import 'package:schedulex_flutter/pages/export/edit_export.dart';
 import 'package:schedulex_flutter/pages/export/ical_export.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
@@ -33,7 +32,7 @@ class _PageExportState extends State<PageExport> {
               SizedBox(
                 height: 4,
               ),
-              BackUpExport(),
+              // BackUpExport(),
             ],
           ),
         ),

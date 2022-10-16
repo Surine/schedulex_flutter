@@ -58,36 +58,37 @@ Widget closeButton({EdgeInsets? padding, VoidCallback? callback}) {
 }
 
 /// Material You风格的Dialog
-void showMaterial3Dialogs({
-  String? title,
-  String subTitle = "",
-  String actionText = "确定",
-  String cancelText = "取消",
-  VoidCallback? actionPress,
-  VoidCallback? cancelPress,
-  Widget? content,
-}) {
+void showMaterial3Dialogs(
+    {String? title,
+    String subTitle = "",
+    String actionText = "确定",
+    String cancelText = "取消",
+    VoidCallback? actionPress,
+    VoidCallback? cancelPress,
+    Widget? content,
+    List<Widget>? actions}) {
   showDialog<void>(
     context: Get.context!,
     builder: (context) => AlertDialog(
       title: Text(title ?? ""),
       content: content ?? Text(subTitle),
-      actions: <Widget>[
-        TextButton(
-          child: Text(cancelText),
-          onPressed: () {
-            cancelPress?.call();
-            Navigator.of(context).pop();
-          },
-        ),
-        TextButton(
-          child: Text(actionText),
-          onPressed: () {
-            actionPress?.call();
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
+      actions: actions ??
+          <Widget>[
+            TextButton(
+              child: Text(cancelText),
+              onPressed: () {
+                cancelPress?.call();
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(actionText),
+              onPressed: () {
+                actionPress?.call();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
     ),
   );
 }

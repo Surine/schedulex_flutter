@@ -4,11 +4,12 @@ import 'package:schedulex_flutter/base/get_anything.dart';
 /// lang
 
 Color hexToColor(String? code) {
-  if (code == null || code.length != 6 || code.length != 8) {
+  if (code == null) {
     return colorScheme.primary;
   }
   if (code.length == 6) return Color(int.parse('0xFF$code'));
-  return Color(int.parse('0x$code'));
+  if (code.length == 8) return Color(int.parse('0x$code'));
+  return colorScheme.primary;
 }
 
 extension ColorExt on Color {

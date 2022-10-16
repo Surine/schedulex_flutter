@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/lang.dart';
+import 'package:schedulex_flutter/app_base/time.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/course.dart';
 import 'package:schedulex_flutter/pages/import/jw_import/page_parse_result.dart';
@@ -13,7 +14,6 @@ import 'package:schedulex_flutter/widget/cardview.dart';
 import 'package:schedulex_flutter/widget/item_tile.dart';
 import 'package:schedulex_flutter/widget/number_wheel.dart';
 import 'package:schedulex_flutter/widget/week_selector.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class PageAddCourse extends StatefulWidget {
   const PageAddCourse({Key? key}) : super(key: key);
@@ -38,12 +38,21 @@ class _PageAddCourseState extends State<PageAddCourse>
   @override
   void initState() {
     super.initState();
+    var data = Get.arguments['courses'];
+    if (data != null) {
+      wrapperDatas.clear();
+      if (data is List) {
+        data.forEach((element) {
+          wrapperDatas.add(element);
+        });
+      }
+    }
     textEditingController = TextEditingController();
     tabController = TabController(length: wrapperDatas.length + 1, vsync: this);
     tabChangeCallback = () {
       if (tabController.index == tabController.length - 1) {
         if (wrapperDatas.length == 5) {
-          Get.snackbar("提示", "一次不要添加太多哦～ 多试几次也方便");
+          toast("一次不要添加太多哦～ 多试几次也方便");
           tabController.animateTo(tabController.length - 2);
           return;
         }
@@ -402,8 +411,11 @@ class _PageAddCourseState extends State<PageAddCourse>
           ),
           ListTile(
             title: const Text("上课时间"),
-            onTap: () {
-              Get.bottomSheet(Card(
+            subtitle: Text(
+                '${wrapperData.day.weekDayStr} ${wrapperData.sessionInfo}'),
+            onTap: () async {
+              String raw = wrapperData.toString();
+              var result = await Get.bottomSheet(Card(
                 child: Container(
                   padding: const EdgeInsets.all(18),
                   child: CoursePlanSelector(
@@ -412,6 +424,9 @@ class _PageAddCourseState extends State<PageAddCourse>
                           scheduleController.curSchedule?.maxSession ?? 12),
                 ),
               ));
+              if (raw != wrapperData.toString()) {
+                setState(() {});
+              }
             },
           )
           // _buildSessionInfo(wrapperData)
@@ -498,8 +513,6 @@ class _PageAddCourseState extends State<PageAddCourse>
       ),
     );
   }
-
-  Map<CourseWrapper, SfRangeValues> sfRangeValueMap = {};
 
   Widget _buildSessionInfo(CourseWrapper wrapperData) {
     return CoursePlanSelector(

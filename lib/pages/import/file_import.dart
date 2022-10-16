@@ -4,10 +4,9 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/course.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
 import 'package:schedulex_flutter/widget/cardview.dart';
@@ -46,11 +45,10 @@ class FileImport extends StatelessWidget {
                   icon: Icons.file_copy_outlined,
                   onTap: () async {
                     String? path = await saveJson();
-                    Get.snackbar(
-                        "提示", "保存 ${path == null ? '失败' : '成功，路径$path'}");
+                    toast("保存 ${path == null ? '失败' : '成功，路径$path'}");
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
                 ClipWidget(
@@ -58,8 +56,7 @@ class FileImport extends StatelessWidget {
                   icon: Icons.grid_3x3,
                   onTap: () async {
                     String? path = await saveCsv();
-                    Get.snackbar(
-                        "提示", "保存 ${path == null ? '失败' : '成功，路径$path'}");
+                    toast("保存 ${path == null ? '失败' : '成功，路径$path'}");
                   },
                 ),
                 SizedBox(
@@ -85,7 +82,7 @@ class FileImport extends StatelessWidget {
                   if (result != null && result.paths.isNotEmpty) {
                     if (!result.paths.first!.endsWith("json") ||
                         !result.paths.first!.endsWith("csv")) {
-                      Get.snackbar("提示", "您选择的文件格式不支持!");
+                      toast("您选择的文件格式不支持!");
                       return;
                     }
                     String file =

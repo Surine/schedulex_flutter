@@ -188,7 +188,7 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
                       ..name = value
                       ..rule = getRule());
                     Get.back();
-                    Get.snackbar("提示", "时间表添加成功");
+                    toast("时间表添加成功");
                   }
                 });
           } else {
@@ -408,7 +408,7 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
       behavior: HitTestBehavior.opaque,
       onTap: () async {
         if (index == 0) {
-          Get.snackbar("提示", "首节时间已固定");
+          toast("首节时间已固定");
           return;
         }
         var split = startTime.split(":");
@@ -421,7 +421,7 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
           int after = result.hour * 60 + result.minute;
           if (after <
               strToMin(sessionTime[max(0, index - 1)].startTime) + sDuration) {
-            Get.snackbar("提示", "不可早于上节课下课时间");
+            toast("不可早于上节课下课时间");
             return;
           }
           setState(() {

@@ -32,7 +32,7 @@ class _PageSelectSchoolState extends State<PageSelectSchool> {
           (element) => element.name?.contains(editingController.text) ?? false);
       _recommendSchool.addAll(schools);
       setState(() {
-        height = _itemHeight * _recommendSchool.length;
+        height = _itemHeight * _recommendSchool.length + 10;
       });
       _scrollController.animateTo(0.0,
           duration: const Duration(milliseconds: 100),
@@ -97,18 +97,6 @@ class _PageSelectSchoolState extends State<PageSelectSchool> {
               duration: const Duration(milliseconds: 100),
               child: _buildRecommendList(),
             ),
-            // const SizedBox(
-            //   height: 10,
-            // ),
-            // Row(
-            //   children: [
-            //     Spacer(),
-            //     button(context, text: "确定", icon: Icons.check, onPress: () {}),
-            //   ],
-            // ),
-            // SizedBox(
-            //   height: 10,
-            // ),
           ],
         ),
       ),
@@ -133,6 +121,7 @@ class _PageSelectSchoolState extends State<PageSelectSchool> {
 
   Widget _buildRecommendList() {
     return Container(
+      padding: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
           color: colorScheme.secondaryContainer.withOpacity(0.4),
           borderRadius: BorderRadius.circular(20)),

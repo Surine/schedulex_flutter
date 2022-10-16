@@ -90,11 +90,11 @@ class _CoursePlanSelectorState extends State<CoursePlanSelector> {
   void initState() {
     super.initState();
     _startSessionController = PageController(
-        viewportFraction: 0.3, initialPage: widget.data.sectionStart);
+        viewportFraction: 0.3, initialPage: widget.data.sectionStart - 1);
     _endSessionController = PageController(
         viewportFraction: 0.3,
         initialPage:
-            widget.data.sectionStart + widget.data.sectionContinue - 1);
+            widget.data.sectionStart + widget.data.sectionContinue - 2);
   }
 
   @override
@@ -110,6 +110,9 @@ class _CoursePlanSelectorState extends State<CoursePlanSelector> {
                 upperCaseNumber: true,
                 pageController: PageController(
                     viewportFraction: 0.3, initialPage: widget.data.day - 1),
+                valueCallback: (index) {
+                  widget.data.day = index + 1;
+                },
               ),
             ),
             Expanded(
@@ -123,6 +126,10 @@ class _CoursePlanSelectorState extends State<CoursePlanSelector> {
                         duration: const Duration(milliseconds: 200),
                         curve: Curves.easeOut);
                   }
+                  widget.data.sectionStart = index + 1;
+                  widget.data.sectionContinue =
+                      _endSessionController.page?.toInt() ??
+                          0 + 2 - widget.data.sectionStart;
                 },
               ),
             ),
@@ -144,6 +151,10 @@ class _CoursePlanSelectorState extends State<CoursePlanSelector> {
                         duration: const Duration(milliseconds: 200),
                         curve: Curves.easeOut);
                   }
+                  widget.data.sectionStart =
+                      _startSessionController.page?.toInt() ?? 0 + 1;
+                  widget.data.sectionContinue =
+                      index + 2 - widget.data.sectionStart;
                 },
               ),
             ),

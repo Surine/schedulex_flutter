@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/app_database.dart';
+import 'package:schedulex_flutter/app_base/time.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/schedule.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,6 +45,7 @@ class ScheduleController extends GetxController {
 
   /// 添加一个课程表
   Future<int> addNewSchedule(Schedule schedule, {bool? needSelect}) async {
+    schedule.termStartDate ??= firstDayOfCurWeek.shortInfo;
     var id = await db.scheduleDao.insertSchedule(schedule);
     if (needSelect ?? false) select(schedule: schedule..dbId = id);
     return id;

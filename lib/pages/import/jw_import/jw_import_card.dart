@@ -68,7 +68,7 @@ class _JWImportCardState extends State<JWImportCard> {
                             "status": controller.curSelectAdapterInfo?.status
                           });
                     } else {
-                      Get.to(PageSelectSchool(),
+                      Get.to(const PageSelectSchool(),
                           transition: defaultRouteTransition);
                     }
                   },
@@ -94,7 +94,8 @@ class _JWImportCardState extends State<JWImportCard> {
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-            text: "${controller.curUniversity!.name}\n",
+            text:
+                "${controller.curUniversity!.name}  ${controller.isPostgraduate ? '研究生院' : ''}\n",
             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
           ),
           const TextSpan(text: "您的学校还未适配,点击按钮申请适配\n或"),
@@ -113,7 +114,8 @@ class _JWImportCardState extends State<JWImportCard> {
     return Text.rich(
       TextSpan(children: [
         TextSpan(
-          text: "${controller.curUniversity!.name}  ",
+          text:
+              "${controller.curUniversity!.name}  ${controller.isPostgraduate ? '研究生院' : ''}",
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         ),
         TextSpan(text: "\n技术支持 @${controller.curSelectAdapterInfo?.author}")

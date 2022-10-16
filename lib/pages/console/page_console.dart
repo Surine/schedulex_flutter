@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/schedule.dart';
@@ -134,7 +135,7 @@ class _PageConsoleState extends State<PageConsole> {
             iconData: Icons.ac_unit,
             text: "帮助",
             onTap: () {
-              Get.snackbar("提示", "敬请期待!");
+              toast("敬请期待!");
             },
             color: Colors.grey,
           ))
@@ -253,7 +254,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                           cur.name = "${cur.name} 副本";
                           cur.dbId = await widget.scheduleController
                               .addNewSchedule(cur);
-                          Get.snackbar("提示", "新课表创建成功!");
+                          toast("新课表创建成功!");
                           setState(() {
                             data!.add(cur!);
                           });
@@ -278,7 +279,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                             subTitle: "此操作不可逆，是否继续?",
                             actionPress: () {
                               if (data!.length == 1) {
-                                Get.snackbar("提示", "最后一个课表，不允许删除!");
+                                toast("最后一个课表，不允许删除!");
                                 return;
                               }
                               widget.scheduleController
@@ -290,7 +291,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                                 widget.courseController
                                     .getCurScheduleCourses(s.dbId!);
                               }
-                              Get.snackbar("提示", "课表删除成功!");
+                              toast("课表删除成功!");
                               setState(() {});
                             });
                       },
@@ -336,7 +337,10 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                 height: 100,
                 child: schedule.imageUrl == null
                     ? Container(
-                        color: Colors.white,
+                        color: Colors.white.withOpacity(0.2),
+                        child: SvgPicture.asset(
+                          "assets/undraw_accept_tasks.svg",
+                        ),
                       )
                     : Image.file(
                         File(schedule.imageUrl ?? ''),

@@ -54,7 +54,7 @@ class _PageEditModeState extends State<PageEditMode> {
                   widget.scheduleController.saveCurSchedule();
                   widget.scheduleController.cancelEdit();
                   Get.back();
-                  Get.snackbar("提示", "您的变更已保存", duration: Duration(seconds: 2));
+                  toast("您的变更已保存");
                   _curEditIndex = 0;
                 },
                 icon: const Icon(Icons.check),

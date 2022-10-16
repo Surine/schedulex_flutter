@@ -13,6 +13,7 @@ import 'package:schedulex_flutter/pages/import/jw_import/page_parse_result.dart'
 import 'package:schedulex_flutter/pages/import/jw_import/page_select_school.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
 import 'package:schedulex_flutter/widget/clip_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'jw_import_controller.dart';
@@ -251,7 +252,11 @@ class _PageJwWebViewState extends State<PageJwWebView> {
                 text: "点我",
                 style: TextStyle(
                     color: colorScheme.primary, fontWeight: FontWeight.w600),
-                recognizer: TapGestureRecognizer()..onTap = () {}),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchUrl(
+                        Uri.parse('https://github.com/Surine/edu_parser'));
+                  }),
             const TextSpan(text: "参与适配开源贡献。"),
           ]),
           style: const TextStyle(fontSize: 18, letterSpacing: 4),
@@ -344,7 +349,7 @@ class _PageJwWebViewState extends State<PageJwWebView> {
         backgroundColor: colorScheme.secondaryContainer,
         onPressed: () async {
           if (status == 1) {
-            Get.snackbar("提示", "解析脚本下线维护中，请过几天再试吧～");
+            toast("解析脚本下线维护中，请过几天再试吧～");
             return;
           }
           if (startUrl == null) {
@@ -415,12 +420,12 @@ class _PageJwWebViewState extends State<PageJwWebView> {
   /// 申请适配
   Future<void> applyAdapter() async {
     if (isSend) {
-      Get.snackbar("提示", "您已提交，请勿重复提交！");
+      toast("您已提交，请勿重复提交！");
       return;
     }
     //todo 上传
     await getHtmlSource(webController);
-    Get.snackbar("提示", "源代码上传成功，开发者会尽快进行适配");
+    toast("源代码上传成功，开发者会尽快进行适配");
     isSend = true;
   }
 }

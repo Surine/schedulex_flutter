@@ -1,4 +1,5 @@
 import 'package:floor/floor.dart';
+import 'package:schedulex_flutter/app_base/time.dart';
 
 /// 课程表
 
@@ -93,5 +94,15 @@ class Schedule {
   @override
   String toString() {
     return 'Schedule{dbId: $dbId, name: $name, totalWeek: $totalWeek, termStartDate: $termStartDate, color: $color, imageUrl: $imageUrl, lightText: $lightText, isShowWeekend: $isShowWeekend, alphaForCourseItem: $alphaForCourseItem, maxSession: $maxSession, itemHeight: $itemHeight, timeTableId: $timeTableId, isShowTime: $isShowTime, courseThemeId: $courseThemeId, textAlignFlag: $textAlignFlag, isShowNotCurWeek: $isShowNotCurWeek, maxHideCharLimit: $maxHideCharLimit, sessionSideWidth: $sessionSideWidth, weekBarHeight: $weekBarHeight}';
+  }
+}
+
+extension ScheduleExt on Schedule {
+  /// 当前周
+  int curWeek() {
+    final Duration duration =
+        DateTime.now().difference(shortInfo2Time(termStartDate));
+    int dayOffset = duration.inDays;
+    return (dayOffset < 0 ? -1 : 1) * (dayOffset.abs() ~/ 7 + 1);
   }
 }

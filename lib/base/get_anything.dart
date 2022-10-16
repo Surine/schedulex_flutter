@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/value.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,3 +21,7 @@ TextTheme? textTheme = Get.context != null
         .textTheme
         .apply(displayColor: colorScheme.onBackground)
     : null;
+
+toast(String msg) {
+  Fluttertoast.showToast(msg: msg);
+}

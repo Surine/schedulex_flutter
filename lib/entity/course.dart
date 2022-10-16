@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:floor/floor.dart';
+import 'package:schedulex_flutter/app_base/time.dart';
 
 /// 课程
 
@@ -83,21 +84,64 @@ class CourseWrapper {
     }
     return map;
   }
+
+  @override
+  String toString() {
+    return 'CourseWrapper{dbId: $dbId, name: $name, position: $position, teacher: $teacher, day: $day, sectionStart: $sectionStart, sectionContinue: $sectionContinue, week: $week, scheduleId: $scheduleId, colors: $colors}';
+  }
+
+  CourseWrapper copyWith({
+    int? dbId,
+    String? name,
+    String? position,
+    String? teacher,
+    int? day,
+    int? sectionStart,
+    int? sectionContinue,
+    String? week,
+    int? scheduleId,
+    String? colors,
+  }) {
+    return CourseWrapper(
+      dbId: dbId ?? this.dbId,
+      name: name ?? this.name,
+      position: position ?? this.position,
+      teacher: teacher ?? this.teacher,
+      day: day ?? this.day,
+      sectionStart: sectionStart ?? this.sectionStart,
+      sectionContinue: sectionContinue ?? this.sectionContinue,
+      week: week ?? this.week,
+      scheduleId: scheduleId ?? this.scheduleId,
+      colors: colors ?? this.colors,
+    );
+  }
 }
 
 extension CourseWrapperExt on CourseWrapper {
   List<int> get weekList =>
-      week == "" ? [] : week.split(",").map((e) => int.parse(e)).toList();
+      week == "" ? [] : week.split(",").map((e) => int.parse(e)).toList()
+        ..sort();
 
   String? get planDisplay => week.isEmpty &&
           day == 1 &&
           sectionStart == 0 &&
           sectionContinue == 1
       ? null
-      : "$week周, 周$day,第$sectionStart节 - 第${sectionStart + sectionContinue - 1}节";
+      : "$week周\n${day.weekDayStr} 第$sectionStart节 - 第${sectionStart + sectionContinue - 1}节";
 
   /// 非本周
   bool isNotCurWeek(int curWeek) {
     return !weekList.contains(curWeek);
+  }
+
+  String get sessionInfo =>
+      "第$sectionStart节 - 第${sectionStart + sectionContinue - 1}节";
+
+  String weekInfo() {
+    List<int> weeks = weekList;
+    if ((weeks.last - weeks.first + 1) == weeks.length) {
+      return "${weeks.first} - ${weeks.last}周";
+    }
+    return weeks.join(",");
   }
 }

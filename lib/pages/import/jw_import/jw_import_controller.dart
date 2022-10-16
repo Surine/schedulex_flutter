@@ -16,12 +16,13 @@ const parseSource = "${baseParseSource}parsers/";
 /// 导入教务控制器
 class JwImportController extends GetxController {
   Schools? curUniversity;
-  bool? isPostgraduate;
+  bool isPostgraduate = false;
   late SharedPreferences sp;
   late final List<Schools> allSchoolList = [];
   AdapterInfo? curSelectAdapterInfo;
 
-  String get universityPath => "${curUniversity?.name}_${curUniversity?.code}";
+  String get universityPath =>
+      "${curUniversity?.name}${isPostgraduate ? '研究生' : ''}_${curUniversity?.code}";
 
   @override
   Future<void> onInit() async {
@@ -54,6 +55,7 @@ class JwImportController extends GetxController {
     // 如果是研究生在前面补充一个 - ，这样不用存两个sp
     sp.setString(
         keyUniversity, (schoolType == 2 ? "-" : "") + (university.name ?? ""));
+    isPostgraduate = schoolType == 2;
     loadAdapterStatus(university).then((value) {
       update();
     });
@@ -64,6 +66,7 @@ class JwImportController extends GetxController {
     Response? res;
     try {
       String url = "$parseSource$universityPath/parse_config.json";
+      print("slw $url");
       Dio dio = Dio();
       dio.interceptors.add(LogInterceptor());
       res = await dio.get(url);

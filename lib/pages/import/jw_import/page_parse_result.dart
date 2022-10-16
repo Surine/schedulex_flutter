@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/lang.dart';
+import 'package:schedulex_flutter/app_base/time.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/course.dart';
 import 'package:schedulex_flutter/entity/schedule.dart';
@@ -58,7 +59,7 @@ class _PageParseResultState extends State<PageParseResult>
                   saveData(needToNew: true);
                 });
           } else {
-            saveData();
+            saveData(needToNew: true);
           }
         },
         label: const Text("导入此页"),
@@ -170,7 +171,8 @@ class _PageParseResultState extends State<PageParseResult>
               child: ListTile(
                   title: Text(courseData[index].name ?? ""),
                   subtitle: Text(
-                    "${courseData[index].position}-${courseData[index].teacher}\n${courseData[index].week}",
+                    "${courseData[index].position}-${courseData[index].teacher}\n${courseData[index].weekInfo()}"
+                    "${courseData[index].day.weekDayStr} ${courseData[index].sessionInfo}",
                   ),
                   isThreeLine: true),
             );
@@ -202,6 +204,11 @@ class _PageParseResultState extends State<PageParseResult>
 
   Future<void> saveData({bool needToNew = false}) async {
     colorMap.clear();
+    if (!needToNew) {
+      // 覆盖
+      await _courseController
+          .deleteCoursesByScheduleId(_scheduleController.curScheduleId!);
+    }
     String? e =
         widget.results[widget.results.keys.toList()[tabController?.index ?? 0]];
     if (e == null) return;
@@ -226,14 +233,10 @@ class _PageParseResultState extends State<PageParseResult>
       }
       courseData.add(courseWrapper);
     }
-    if (_scheduleController.curScheduleId != null) {
-      await _courseController
-          .deleteCoursesByScheduleId(_scheduleController.curScheduleId!);
-    }
     await _courseController.insertCourses(courseData);
     Navigator.popUntil(context,
         (route) => (route as GetPageRoute).routeName == '/ScheduleXApp');
-    Get.snackbar("提示", "课程导入成功");
+    toast("课程导入成功");
   }
 }
 
