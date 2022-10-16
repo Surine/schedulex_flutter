@@ -45,7 +45,8 @@ class WeekEdit extends StatelessWidget {
             ),
             SwitchListTile(
               title: const Text("是否显示周末"),
-              subtitle: Text("当前${sc.curSchedule?.isShowWeekend}"),
+              subtitle: Text(
+                  "当前${sc.curSchedule?.isShowWeekend ?? false ? '显示' : '不显示'}"),
               onChanged: (bool value) {
                 if (sc.curSchedule == null) return;
                 sc.curSchedule!.isShowWeekend = value;

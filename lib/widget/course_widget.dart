@@ -136,7 +136,8 @@ class _CourseWidgetState extends State<CourseWidget> {
               child: Text(
                 "${weekMonth.month}\n月",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: widget.mainColor, height: 1),
+                style:
+                    TextStyle(color: widget.mainColor, height: 1, fontSize: 12),
               ),
             )),
         for (var i = 0; i < widget.maxDay; i++)
@@ -225,7 +226,7 @@ class _CourseWidgetState extends State<CourseWidget> {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: widget.mainColor,
-              fontSize: 14,
+              fontSize: 12,
               height: 1.2,
             ),
           ),

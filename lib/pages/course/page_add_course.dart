@@ -38,13 +38,17 @@ class _PageAddCourseState extends State<PageAddCourse>
   @override
   void initState() {
     super.initState();
-    var data = Get.arguments['courses'];
-    if (data != null) {
-      wrapperDatas.clear();
-      if (data is List) {
-        data.forEach((element) {
-          wrapperDatas.add(element);
-        });
+    var arg = Get.arguments;
+
+    if (arg != null) {
+      var data = arg['courses'];
+      if (data != null) {
+        wrapperDatas.clear();
+        if (data is List) {
+          for (var element in data) {
+            wrapperDatas.add(element);
+          }
+        }
       }
     }
     textEditingController = TextEditingController();

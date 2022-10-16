@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/value.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/pages/import/jw_import/jw_import_controller.dart';
-import 'package:schedulex_flutter/pages/page_import.dart';
 import 'package:schedulex_flutter/pages/schedule/course/course_controller.dart';
 import 'package:schedulex_flutter/pages/schedule/page_main.dart';
 import 'package:schedulex_flutter/pages/schedule/timetable/timetable_controller.dart';
@@ -114,7 +113,7 @@ class _ScheduleXAppState extends State<ScheduleXApp> {
 
   @override
   Widget build(BuildContext context) {
-    var body = !logic.hasSchedule() ? const PageImport() : const PageMain();
+    var body = const PageMain();
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: body,

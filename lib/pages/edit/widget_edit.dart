@@ -10,8 +10,8 @@ class WidgetEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [],
+    return Container(
+      child: Center(child: Text('开发中，再等等吧～')),
     );
   }
 }

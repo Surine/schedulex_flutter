@@ -13,6 +13,26 @@ import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
 import 'package:schedulex_flutter/widget/cardview.dart';
 
+final List<String> defaultColor = [
+  "A992FE",
+  "FDDF4E",
+  "5EEFA0",
+  "FFA17D",
+  "D68DF9",
+  "86B0FC",
+  "FC9586",
+  "65BFEA",
+  "659DEA",
+  "6A65EA",
+  "A97CF8",
+  "E891F3",
+  "F391D5",
+  "F391B4",
+  "F39193",
+  "96C487",
+  "87C2C4"
+];
+
 class PageParseResult extends StatefulWidget {
   const PageParseResult(this.results, {Key? key}) : super(key: key);
   final Map<String, String> results;
@@ -78,7 +98,7 @@ class _PageParseResultState extends State<PageParseResult>
                         width: 8,
                       ),
                       Text("信息核对", style: textTheme?.headline5?.copyWith()),
-                      Spacer(),
+                      const Spacer(),
                       closeButton(padding: EdgeInsets.zero)
                     ],
                   ),
@@ -86,11 +106,12 @@ class _PageParseResultState extends State<PageParseResult>
               ),
               SliverToBoxAdapter(
                 child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
+                  margin: const EdgeInsets.symmetric(vertical: 10),
                   child: CardView(
                     radius: 4,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
                       child: const Text(
                           "请仔细核对解析结果以免有细节问题耽误上课，如果有多个解析器结果，选择正确的导入即可,如果有错误欢迎加QQ群反馈。"),
                     ),
@@ -162,6 +183,8 @@ class _PageParseResultState extends State<PageParseResult>
           itemCount: courseData.length,
           itemBuilder: (context, index) {
             return Container(
+              margin: EdgeInsets.only(
+                  bottom: index == courseData.length - 1 ? 60 : 0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: index % 2 == 1
@@ -179,26 +202,6 @@ class _PageParseResultState extends State<PageParseResult>
           }),
     );
   }
-
-  final List<String> defaultColor = [
-    "A992FE",
-    "FDDF4E",
-    "5EEFA0",
-    "FFA17D",
-    "D68DF9",
-    "86B0FC",
-    "FC9586",
-    "65BFEA",
-    "659DEA",
-    "6A65EA",
-    "A97CF8",
-    "E891F3",
-    "F391D5",
-    "F391B4",
-    "F39193",
-    "96C487",
-    "87C2C4"
-  ];
 
   final Map<String, Color> colorMap = {};
 
@@ -222,7 +225,6 @@ class _PageParseResultState extends State<PageParseResult>
     }
     for (var e in result) {
       CourseWrapper courseWrapper = CourseWrapper.fromJson(e)..scheduleId = id;
-
       if (colorMap.containsKey(courseWrapper.name)) {
         courseWrapper.colors = colorMap[courseWrapper.name]!.str;
       } else {

@@ -75,7 +75,7 @@ class CourseWrapper {
     map['day'] = day;
     map['sectionStart'] = sectionStart;
     map['sectionContinue'] = sectionContinue;
-    map['raWeek'] = week;
+    map['week'] = week;
     if (ignoreNull && colors != null) {
       map['colors'] = colors;
     }

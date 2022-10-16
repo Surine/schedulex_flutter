@@ -11,6 +11,7 @@ import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/schedule.dart';
 import 'package:schedulex_flutter/pages/console/page_console.dart';
 import 'package:schedulex_flutter/pages/edit/page_edit_mode.dart';
+import 'package:schedulex_flutter/pages/page_import.dart';
 import 'package:schedulex_flutter/pages/schedule/course/course_controller.dart';
 import 'package:schedulex_flutter/pages/schedule/timetable/timetable_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
@@ -29,10 +30,16 @@ class _PageMainState extends State<PageMain> {
   int? pagerWeek;
   int? curWeek;
   PageController? pageController;
+  final ScheduleController _scheduleController = Get.find<ScheduleController>();
 
   @override
   void initState() {
     super.initState();
+    if (!_scheduleController.hasSchedule()) {
+      Future.delayed(const Duration(milliseconds: 200)).then((value) {
+        Get.to(const PageImport());
+      });
+    }
   }
 
   @override

@@ -69,7 +69,7 @@ class _PageConsoleState extends State<PageConsole> {
         const Spacer(),
         IconButton(
             onPressed: () {
-              Get.to(PageSetting());
+              Get.to(const PageSetting());
             },
             icon: Icon(
               Icons.settings,
@@ -81,7 +81,7 @@ class _PageConsoleState extends State<PageConsole> {
 
   Widget buildBottom() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -92,7 +92,7 @@ class _PageConsoleState extends State<PageConsole> {
             color: Colors.green,
             onTap: () {
               Get.back();
-              Get.to(PageImport());
+              Get.to(const PageImport());
             },
           )),
           Flexible(
@@ -102,7 +102,7 @@ class _PageConsoleState extends State<PageConsole> {
             color: Colors.deepOrangeAccent,
             onTap: () {
               Get.back();
-              Get.to(PageExport());
+              Get.to(const PageExport());
             },
           )),
           Flexible(
@@ -112,7 +112,7 @@ class _PageConsoleState extends State<PageConsole> {
             color: Colors.blue,
             onTap: () {
               Get.back();
-              Get.to(PageAddCourse());
+              Get.to(const PageAddCourse());
             },
           )),
           Flexible(
@@ -182,6 +182,10 @@ class _ScheduleListViewState extends State<ScheduleListView> {
   void initState() {
     super.initState();
     _sc = ScrollController();
+    updateSelect();
+  }
+
+  void updateSelect() {
     data = widget.scheduleController.allSchedules;
     if (data == null) return;
     for (var i = 0; i < data!.length; i++) {
@@ -207,12 +211,12 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                       ? _buildSelectDisplay(data![index], index)
                       : _buildNormalDisplay(data![index], index);
                   return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: Center(child: result),
-                    padding: EdgeInsets.symmetric(horizontal: 5),
                   );
                 }),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
         ],
@@ -231,9 +235,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
         children: [
           Row(
             children: [
-              Container(
-                  // margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: _buildNormalDisplay(schedule, index)),
+              Container(child: _buildNormalDisplay(schedule, index)),
               const SizedBox(
                 width: 6,
               ),
@@ -267,7 +269,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                     height: 20,
                   ),
                   Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       color: Colors.grey.shade300,
@@ -292,7 +294,9 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                                     .getCurScheduleCourses(s.dbId!);
                               }
                               toast("课表删除成功!");
-                              setState(() {});
+                              setState(() {
+                                updateSelect();
+                              });
                             });
                       },
                       child: const Icon(
@@ -309,7 +313,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
             padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
             child: Text(
               schedule.name,
-              style: TextStyle(fontWeight: FontWeight.w600),
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           )
         ],

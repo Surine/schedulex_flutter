@@ -16,7 +16,8 @@ class CourseEdit extends StatelessWidget {
         children: [
           SwitchListTile(
             title: const Text("是否显示非本周课程"),
-            subtitle: Text("当前 ${sc.curSchedule?.isShowNotCurWeek}"),
+            subtitle: Text(
+                "当前${sc.curSchedule?.isShowNotCurWeek ?? false ? '显示' : '不显示'}"),
             value: sc.curSchedule?.isShowNotCurWeek ?? false,
             onChanged: (value) {
               sc.curSchedule?.isShowNotCurWeek = value;

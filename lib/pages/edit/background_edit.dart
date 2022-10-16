@@ -30,7 +30,7 @@ class BackgroundEdit extends StatelessWidget {
           ),
           ListTile(
             title: const Text("选择背景图"),
-            subtitle: Text(sc.curSchedule?.imageUrl ?? ""),
+            subtitle: Text(sc.curSchedule?.imageUrl ?? "无背景"),
             onTap: () async {
               // Pick an image
               final XFile? image =
@@ -49,7 +49,7 @@ class BackgroundEdit extends StatelessWidget {
               sc.updateEdit();
             },
             max: 50,
-            min: 30,
+            min: 20,
           ),
           ListTile(
             title: const Text("主界面色彩"),

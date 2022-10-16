@@ -30,7 +30,8 @@ class _TimeTableEditState extends State<TimeTableEdit> {
             ),
             SwitchListTile(
               title: const Text("是否显示时间表"),
-              subtitle: Text("当前 ${sc.curSchedule?.isShowTime}"),
+              subtitle: Text(
+                  "当前${sc.curSchedule?.isShowTime ?? false ? '显示' : '不显示'}"),
               value: sc.curSchedule?.isShowTime ?? false,
               onChanged: (value) {
                 sc.curSchedule?.isShowTime = value;

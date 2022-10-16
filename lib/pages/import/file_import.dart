@@ -1,41 +1,56 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:schedulex_flutter/app_base/lang.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
 import 'package:schedulex_flutter/entity/course.dart';
+import 'package:schedulex_flutter/entity/schedule.dart';
+import 'package:schedulex_flutter/pages/import/jw_import/page_parse_result.dart';
+import 'package:schedulex_flutter/pages/schedule/course/course_controller.dart';
+import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/widget/basic.dart';
 import 'package:schedulex_flutter/widget/cardview.dart';
 import 'package:schedulex_flutter/widget/clip_widget.dart';
 import 'package:schedulex_flutter/widget/item_tile.dart';
 
-class FileImport extends StatelessWidget {
+class FileImport extends StatefulWidget {
   const FileImport({Key? key}) : super(key: key);
+
+  @override
+  State<FileImport> createState() => _FileImportState();
+}
+
+class _FileImportState extends State<FileImport> {
+  final ScheduleController _scheduleController = Get.find<ScheduleController>();
+  final CourseController _courseController = Get.find<CourseController>();
 
   @override
   Widget build(BuildContext context) {
     return CardView(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ItemTile(
+            const ItemTile(
               iconData: Icons.file_present,
               textStr: "文件导入",
               iconColor: Colors.orange,
             ),
-            SizedBox(
+            const SizedBox(
               height: 25,
             ),
-            Text(
+            const Text(
               "当前支持的文件格式有：",
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Row(
@@ -59,18 +74,18 @@ class FileImport extends StatelessWidget {
                     toast("保存 ${path == null ? '失败' : '成功，路径$path'}");
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
-            Text(
+            const Text(
               "点击标签下载模板，修改完成后点击导入即可",
             ),
-            SizedBox(
+            const SizedBox(
               height: 25,
             ),
             button(
@@ -80,14 +95,14 @@ class FileImport extends StatelessWidget {
                   FilePickerResult? result =
                       await FilePicker.platform.pickFiles();
                   if (result != null && result.paths.isNotEmpty) {
-                    if (!result.paths.first!.endsWith("json") ||
-                        !result.paths.first!.endsWith("csv")) {
-                      toast("您选择的文件格式不支持!");
-                      return;
+                    if (result.paths.first!.endsWith("json") ||
+                        result.paths.first!.endsWith("csv")) {
+                      String file =
+                          File(result.paths.first!).readAsBytesSync().join();
+                      parse(file, result.paths.first!);
+                    } else {
+                      toast('您选的文件格式不支持！');
                     }
-                    String file =
-                        File(result.paths.first!).readAsBytesSync().join();
-                    parse(file);
                   }
                 }),
           ],
@@ -96,7 +111,77 @@ class FileImport extends StatelessWidget {
     );
   }
 
-  void parse(String file) {}
+  /// 开始弹出保存提示
+  void parse(String fileData, String path) {
+    if (_scheduleController.curSchedule != null) {
+      showMaterial3Dialogs(
+          title: "提示",
+          subTitle: "导入后，与当前选中的课表相关联的数据都会被覆盖，是否继续？",
+          actionText: "继续",
+          actionPress: () {
+            saveData(fileData, path);
+          },
+          cancelText: "新建一个课表",
+          cancelPress: () {
+            saveData(fileData, path, needToNew: true);
+          });
+    } else {
+      saveData(fileData, path, needToNew: true);
+    }
+  }
+
+  final Map<String, Color> colorMap = {};
+
+  Future<void> saveData(String fileData, String path,
+      {bool needToNew = false}) async {
+    colorMap.clear();
+    if (!needToNew) {
+      // 覆盖
+      await _courseController
+          .deleteCoursesByScheduleId(_scheduleController.curScheduleId!);
+    }
+    List<CourseWrapper> courseData = [];
+    List<dynamic> result;
+    if (path.endsWith('json')) {
+      result = jsonDecode(fileData);
+    } else {
+      List<List<dynamic>> parse = const CsvToListConverter().convert(
+        fileData,
+      );
+      result = parse.map((item) {
+        return CourseWrapper(
+            name: item[0],
+            position: item[1],
+            teacher: item[2],
+            day: item[3],
+            sectionStart: item[4],
+            sectionContinue: item[5],
+            week: item[6]);
+      }).toList();
+    }
+    var random = Random();
+    int? id = _scheduleController.curScheduleId;
+    if (needToNew) {
+      id = await _scheduleController.addNewSchedule(Schedule(),
+          needSelect: true);
+    }
+    for (var e in result) {
+      CourseWrapper courseWrapper = CourseWrapper.fromJson(e)..scheduleId = id;
+      if (colorMap.containsKey(courseWrapper.name)) {
+        courseWrapper.colors = colorMap[courseWrapper.name]!.str;
+      } else {
+        Color color =
+            hexToColor(defaultColor[random.nextInt(defaultColor.length - 1)]);
+        courseWrapper.colors = color.str;
+        colorMap[courseWrapper.name!] = color;
+      }
+      courseData.add(courseWrapper);
+    }
+    await _courseController.insertCourses(courseData);
+    Navigator.popUntil(context,
+        (route) => (route as GetPageRoute).routeName == '/ScheduleXApp');
+    toast("课程导入成功");
+  }
 
   Future<String?> saveJson() async {
     if (!await Permission.storage.request().isGranted) {
@@ -136,7 +221,7 @@ class FileImport extends StatelessWidget {
           'day',
           'sectionStart',
           'sectionContinue',
-          'raWeek'
+          'week'
         ],
         ['课程名', '上课地点', '教师', 1, 1, 2, '1,3,5,7,9']
       ]);
