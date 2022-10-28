@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/value.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
+import 'package:schedulex_flutter/pages/import/jw_import/common_jw.dart';
 import 'package:schedulex_flutter/pages/import/jw_import/jw_import_controller.dart';
 import 'package:schedulex_flutter/pages/import/jw_import/page_jw_webview.dart';
 import 'package:schedulex_flutter/pages/import/jw_import/page_select_school.dart';
@@ -102,7 +103,7 @@ class _JWImportCardState extends State<JWImportCard> {
           TextSpan(
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  Get.snackbar("测试", "xxx");
+                  Get.bottomSheet(CommonJwPage());
                 },
               text: " 点此尝试通用教务",
               style: TextStyle(

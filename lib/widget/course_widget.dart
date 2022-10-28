@@ -69,16 +69,12 @@ class CourseWidget extends StatefulWidget {
 }
 
 class _CourseWidgetState extends State<CourseWidget> {
-  TimeTable? timeTable;
   PageController? pageController;
 
   @override
   void initState() {
     super.initState();
     pageController = widget.pageController;
-    widget.timeTableGetter?.then((value) {
-      timeTable = value;
-    });
   }
 
   @override
@@ -147,14 +143,19 @@ class _CourseWidgetState extends State<CourseWidget> {
   }
 
   Widget buildTimeBar() {
-    return SizedBox(
-      width: widget.sessionSideWidth.toDouble(),
-      child: Column(
-        children: [
-          for (var i = 0; i < widget.maxSession; i++) buildSessionLabel(i)
-        ],
-      ),
-    );
+    return FutureBuilder<TimeTable?>(
+        future: widget.timeTableGetter,
+        builder: (context, snapshot) {
+          return SizedBox(
+            width: widget.sessionSideWidth.toDouble(),
+            child: Column(
+              children: [
+                for (var i = 0; i < widget.maxSession; i++)
+                  buildSessionLabel(snapshot.data, i)
+              ],
+            ),
+          );
+        });
   }
 
   Widget buildDaySession(int index, int day) {
@@ -233,7 +234,7 @@ class _CourseWidgetState extends State<CourseWidget> {
         ));
   }
 
-  Widget buildSessionLabel(int index) {
+  Widget buildSessionLabel(TimeTable? timeTable, int index) {
     String timeTableStr = "";
     List<PureTime>? pureTimes = timeTable?.getPureTimes();
     if (pureTimes != null && pureTimes.length > index) {
@@ -266,9 +267,10 @@ class _CourseWidgetState extends State<CourseWidget> {
       ),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-          color: hexToColor(course.colors)
-              .withOpacity(widget.schedule.alphaForCourseItem / 10)
-              .withOpacity(course.isNotCurWeek(displayWeek) ? 0.5 : 1),
+          color: hexToColor(course.colors).withOpacity(
+              course.isNotCurWeek(displayWeek)
+                  ? 0.5
+                  : widget.schedule.alphaForCourseItem / 10),
           borderRadius: BorderRadius.circular(10),
           border: widget.schedule.itemBorderWidth == 0
               ? null
@@ -449,9 +451,10 @@ class _CourseWidgetState extends State<CourseWidget> {
               (course.sectionContinue * widget.sessionItemHeight).toDouble() -
                   6,
           decoration: BoxDecoration(
-              color: hexToColor(course.colors)
-                  .withOpacity(widget.schedule.alphaForCourseItem / 10)
-                  .withOpacity(course.isNotCurWeek(displayWeek) ? 0.4 : 1),
+              color: hexToColor(course.colors).withOpacity(
+                  course.isNotCurWeek(displayWeek)
+                      ? 0.4
+                      : widget.schedule.alphaForCourseItem / 10),
               borderRadius: BorderRadius.circular(10),
               border: widget.schedule.itemBorderWidth == 0
                   ? null

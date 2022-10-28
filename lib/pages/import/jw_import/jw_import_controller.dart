@@ -40,7 +40,7 @@ class JwImportController extends GetxController {
         isPostgraduate = name.startsWith("-");
       }
       if (curUniversity != null) {
-        loadAdapterStatus(curUniversity!).then((value) {
+        loadAdapterStatus().then((value) {
           update();
         });
       } else {
@@ -56,17 +56,18 @@ class JwImportController extends GetxController {
     sp.setString(
         keyUniversity, (schoolType == 2 ? "-" : "") + (university.name ?? ""));
     isPostgraduate = schoolType == 2;
-    loadAdapterStatus(university).then((value) {
+    loadAdapterStatus().then((value) {
       update();
     });
   }
 
-  Future<AdapterInfo?> loadAdapterStatus(Schools university) async {
+  /// [code]: 通用教务的标识码
+  Future<AdapterInfo?> loadAdapterStatus({String? code}) async {
     // todo 封装dio util
     Response? res;
     try {
-      String url = "$parseSource$universityPath/parse_config.json";
-      print("slw $url");
+      String infix = code ?? universityPath;
+      String url = "$parseSource$infix/parse_config.json";
       Dio dio = Dio();
       dio.interceptors.add(LogInterceptor());
       res = await dio.get(url);

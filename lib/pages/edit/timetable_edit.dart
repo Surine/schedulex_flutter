@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:schedulex_flutter/entity/timetable.dart';
 import 'package:schedulex_flutter/pages/schedule/schedule_controller.dart';
 import 'package:schedulex_flutter/pages/schedule/timetable/page_timetable.dart';
+import 'package:schedulex_flutter/pages/schedule/timetable/timetable_controller.dart';
 import 'package:schedulex_flutter/widget/list_tile.dart';
 
 class TimeTableEdit extends StatefulWidget {
@@ -12,6 +14,9 @@ class TimeTableEdit extends StatefulWidget {
 }
 
 class _TimeTableEditState extends State<TimeTableEdit> {
+  final TimeTableController _timeTableController =
+      Get.find<TimeTableController>();
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ScheduleController>(
@@ -40,15 +45,21 @@ class _TimeTableEditState extends State<TimeTableEdit> {
             ),
             ListTile(
               title: const Text("当前时间表"),
-              subtitle: Text(sc.curSchedule?.timeTableId?.toString() ?? "无时间表"),
+              subtitle: FutureBuilder<TimeTable?>(
+                  future: _timeTableController
+                      .getTimeTableById(sc.curSchedule?.timeTableId),
+                  builder: (context, snapshot) {
+                    return Text(snapshot.data == null
+                        ? "无时间表"
+                        : "${snapshot.data?.name}");
+                  }),
               onTap: () async {
                 var result = await Get.to(
                     PageTimeTable(timeTableId: sc.curSchedule?.timeTableId));
                 setState(() {
-                  if (result == null) {
-                    sc.curSchedule?.timeTableId = null;
-                  } else {
+                  if (result != null) {
                     sc.curSchedule?.timeTableId = result as int;
+                    sc.updateEdit();
                   }
                 });
               },

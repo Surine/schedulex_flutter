@@ -80,7 +80,7 @@ class Schedule {
       this.alphaForCourseItem = 10,
       this.maxSession = 12,
       this.itemHeight = 60,
-      this.timeTableId = 0,
+      this.timeTableId = -1,
       this.isShowTime = true,
       this.courseThemeId,
       this.itemBorderWidth = 0,

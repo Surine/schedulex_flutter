@@ -96,7 +96,7 @@ class _FileExportState extends State<FileExport> {
                 builder: (context, AsyncSnapshot<List<Directory>?> data) {
                   directory = data.data;
                   return Text(
-                    "点击对应标签导出对应文件到目标目录，默认l路径\n${directory?.first.path}",
+                    "点击对应标签导出对应文件到目标目录，默认路径\n${directory?.first.path}",
                   );
                 }),
             // const SizedBox(

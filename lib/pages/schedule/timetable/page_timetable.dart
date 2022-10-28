@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:schedulex_flutter/app_base/time.dart';
 import 'package:schedulex_flutter/base/get_anything.dart';
@@ -24,6 +25,7 @@ class _PageTimeTableState extends State<PageTimeTable> {
   final logic = Get.find<TimeTableController>();
 
   int? curSelectTimeTable;
+  bool hasTables = false;
 
   @override
   void initState() {
@@ -35,6 +37,11 @@ class _PageTimeTableState extends State<PageTimeTable> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
+        if (hasTables && curSelectTimeTable == null ||
+            curSelectTimeTable == -1) {
+          toast("您还未选需要的时间表，请点击选择");
+          return Future.value(false);
+        }
         Get.back(result: curSelectTimeTable);
         return Future.value(true);
       },
@@ -56,6 +63,20 @@ class _PageTimeTableState extends State<PageTimeTable> {
                 .isEmpty) {
               curSelectTimeTable = null;
             }
+
+            hasTables = controller.timetables.isNotEmpty;
+            Widget placeHolder = const SizedBox.shrink();
+            if (!hasTables) {
+              placeHolder = Center(
+                child: Container(
+                  padding: const EdgeInsets.all(50),
+                  child: SvgPicture.asset(
+                    "assets/undraw_accept_tasks.svg",
+                  ),
+                ),
+              );
+            }
+
             return LargeTitleAppbar(
                 title: '时间表',
                 actions: [
@@ -63,95 +84,105 @@ class _PageTimeTableState extends State<PageTimeTable> {
                     Get.back(result: curSelectTimeTable);
                   })
                 ],
-                child: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      TimeTable timeTable = controller.timetables[index];
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            curSelectTimeTable = timeTable.dbId;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 4, horizontal: 20),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: timeTable.dbId == curSelectTimeTable
-                                    ? Border.all(
-                                        width: 2, color: colorScheme.primary)
-                                    : null),
-                            child: CardView(
-                              radius: 10,
-                              child: Container(
-                                height: 50,
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Row(
-                                      children: [
-                                        Text(timeTable.name),
-                                        Spacer(),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Get.to(PageTimeTableEdit(
-                                              timeTable: timeTable,
-                                            ));
-                                          },
-                                          child: Icon(
-                                            Icons.edit,
-                                            color: colorScheme.primary,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            showMaterial3Dialogs(
-                                                title: "警告",
-                                                subTitle: "此操作不可逆，是否继续?",
-                                                actionPress: () async {
-                                                  await controller
-                                                      .deleteTimeTablesById(
-                                                          timeTable.dbId!);
-                                                  setState(() {
-                                                    if (curSelectTimeTable ==
-                                                        timeTable.dbId) {
-                                                      if (controller
-                                                          .timetables.isEmpty) {
-                                                        curSelectTimeTable =
-                                                            null;
-                                                      } else {
-                                                        curSelectTimeTable =
-                                                            controller
-                                                                .timetables[0]
-                                                                .dbId;
-                                                      }
-                                                    }
-                                                  });
-                                                });
-                                          },
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: Colors.red.withOpacity(0.7),
-                                          ),
-                                        )
-                                      ],
-                                    )),
+                child: !hasTables
+                    ? placeHolder
+                    : SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            TimeTable timeTable = controller.timetables[index];
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  curSelectTimeTable = timeTable.dbId;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4, horizontal: 20),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border:
+                                          timeTable.dbId == curSelectTimeTable
+                                              ? Border.all(
+                                                  width: 2,
+                                                  color: colorScheme.primary)
+                                              : null),
+                                  child: CardView(
+                                    radius: 10,
+                                    child: Container(
+                                      height: 50,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Row(
+                                            children: [
+                                              Text(timeTable.name),
+                                              Spacer(),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Get.to(PageTimeTableEdit(
+                                                    timeTable: timeTable,
+                                                  ));
+                                                },
+                                                child: Icon(
+                                                  Icons.edit,
+                                                  color: colorScheme.primary,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 20,
+                                              ),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  showMaterial3Dialogs(
+                                                      title: "警告",
+                                                      subTitle: "此操作不可逆，是否继续?",
+                                                      actionPress: () async {
+                                                        await controller
+                                                            .deleteTimeTablesById(
+                                                                timeTable
+                                                                    .dbId!);
+                                                        setState(() {
+                                                          if (curSelectTimeTable ==
+                                                              timeTable.dbId) {
+                                                            if (controller
+                                                                .timetables
+                                                                .isEmpty) {
+                                                              curSelectTimeTable =
+                                                                  null;
+                                                            } else {
+                                                              curSelectTimeTable =
+                                                                  controller
+                                                                      .timetables[
+                                                                          0]
+                                                                      .dbId;
+                                                            }
+                                                          }
+                                                        });
+                                                      });
+                                                },
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red
+                                                      .withOpacity(0.7),
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
+                          childCount: controller.timetables.length,
                         ),
-                      );
-                    },
-                    childCount: controller.timetables.length,
-                  ),
-                ));
+                      ));
           },
         ),
       ),
@@ -172,13 +203,21 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
   final tc = Get.find<TimeTableController>();
   final sc = Get.find<ScheduleController>();
 
+  TimeTable? curTimeTable;
+
+  @override
+  void initState() {
+    super.initState();
+    curTimeTable = widget.timeTable;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colorScheme.background,
       floatingActionButton: FloatingActionButton.large(
         onPressed: () {
-          if (widget.timeTable == null) {
+          if (curTimeTable == null) {
             // 新建
             showMaterial3EditDialog(
                 title: "请输入时间表名称",
@@ -193,6 +232,9 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
                 });
           } else {
             // 修改
+            tc.updateTable(curTimeTable!..rule = getRule());
+            Get.back();
+            toast("时间表修改成功");
           }
         },
         backgroundColor: colorScheme.secondaryContainer,
@@ -243,35 +285,33 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
     );
   }
 
-  String hour = "08";
-  String min = "00";
+  late String hour = curPureTime?[0].startTime.split(":")[0] ?? "08";
+  late String min = curPureTime?[0].startTime.split(":")[1] ?? "00";
 
   Widget _buildStep(int no, String text) {
-    return Container(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(180),
-                color: Colors.blueGrey.shade300),
-            child: Center(
-                child: Text(
-              no.toString(),
-              style: TextStyle(color: Colors.white),
-            )),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Text(
-            text,
-            style: TextStyle(fontWeight: FontWeight.w500),
-          )
-        ],
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(180),
+              color: Colors.blueGrey.shade300),
+          child: Center(
+              child: Text(
+            no.toString(),
+            style: TextStyle(color: Colors.white),
+          )),
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Text(
+          text,
+          style: TextStyle(fontWeight: FontWeight.w500),
+        )
+      ],
     );
   }
 
@@ -343,7 +383,7 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
     );
   }
 
-  double sDuration = 45.0;
+  late double sDuration = curPureTime?[0].offset?.toDouble() ?? 45.0;
 
   _buildCourseTime() {
     return Container(
@@ -385,21 +425,23 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
     );
   }
 
-  late List<TimeInfo> sessionTime = [
-    TimeInfo("8:00"),
-    TimeInfo("9:00"),
-    TimeInfo("10:10"),
-    TimeInfo("11:10"),
-    TimeInfo("13:30"),
-    TimeInfo("14:30"),
-    TimeInfo("15:40"),
-    TimeInfo("16:40"),
-    TimeInfo("18:30"),
-    TimeInfo("19:30"),
-    TimeInfo("20:30"),
-    TimeInfo("21:25"),
-    for (var i = 11; i < 20; i++) TimeInfo("24:00")
-  ];
+  late List<PureTime>? curPureTime = getCurTime();
+  late List<PureTime> sessionTime = curPureTime ??
+      [
+        PureTime("8:00"),
+        PureTime("9:00"),
+        PureTime("10:10"),
+        PureTime("11:10"),
+        PureTime("13:30"),
+        PureTime("14:30"),
+        PureTime("15:40"),
+        PureTime("16:40"),
+        PureTime("18:30"),
+        PureTime("19:30"),
+        PureTime("20:30"),
+        PureTime("21:25"),
+        for (var i = 11; i < 20; i++) PureTime("24:00")
+      ];
 
   Widget _buildSessionItem(int index) {
     String startTime = sessionTime[index].startTime;
@@ -456,6 +498,19 @@ class _PageTimeTableEditState extends State<PageTimeTableEdit> {
         ..add(end);
     }
     return timeSection.join(",");
+  }
+
+  List<PureTime>? getCurTime() {
+    var cur = curTimeTable?.getPureTimes();
+    if (cur == null) return null;
+    if ((cur.length) >= 20) {
+      return cur.sublist(0, 20);
+    } else {
+      return [
+        ...cur,
+        ...[for (var i = cur.length; i < 20; i++) PureTime("24:00")]
+      ];
+    }
   }
 }
 

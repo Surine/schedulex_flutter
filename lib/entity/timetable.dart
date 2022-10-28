@@ -15,9 +15,12 @@ class TimeTable {
 
 class PureTime {
   String startTime;
-  String endTime;
+  String? endTime;
 
-  PureTime(this.startTime, this.endTime);
+  PureTime(this.startTime, [this.endTime]);
+
+  int? get offset =>
+      endTime == null ? null : strToMin(endTime!) - strToMin(startTime);
 
   @override
   String toString() {

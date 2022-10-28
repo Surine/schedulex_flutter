@@ -47,8 +47,8 @@ class _PageMainState extends State<PageMain> {
     return GetBuilder<ScheduleController>(builder: (ScheduleController sc) {
       if (sc.curSchedule?.curWeek() != curWeek) {
         curWeek = sc.curSchedule?.curWeek();
-        pageController = PageController(initialPage: curWeek!);
       }
+      pageController = PageController(initialPage: curWeek!);
       pagerWeek ??= curWeek;
       Widget placeHolder = Center(
         child: Container(

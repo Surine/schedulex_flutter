@@ -58,7 +58,7 @@ String wrapperTime(String time) {
   int hour = int.parse(splits[0]);
   int overflow = hour ~/ 24;
   if (overflow == 0) return time;
-  return "${hour % 24}:${splits[1]}(+${overflow}d)";
+  return "${hour % 24}:${splits[1]}";
 }
 
 extension DateTimeExt on DateTime {

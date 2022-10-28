@@ -198,7 +198,7 @@ class _$CourseDao extends CourseDao {
   @override
   Future<void> deleteCourseWrappersByScheduleId(int id) async {
     await _queryAdapter.queryNoReturn(
-        'DELETE * FROM CourseWrapper where scheduleId = ?1',
+        'DELETE FROM CourseWrapper where scheduleId = ?1',
         arguments: [id]);
   }
 
